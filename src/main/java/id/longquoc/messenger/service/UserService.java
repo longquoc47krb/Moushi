@@ -1,18 +1,16 @@
 package id.longquoc.messenger.service;
 
 import com.github.javafaker.Faker;
-import id.longquoc.messenger.dto.RegisterDto;
-import id.longquoc.messenger.model.Role;
+import id.longquoc.messenger.mapper.UserMapper;
+import id.longquoc.messenger.payload.request.RegisterDto;
+import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.repository.UserRepository;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,6 +20,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     public RegisterDto generateFakeUser() {
         RegisterDto user = new RegisterDto();
         user.setFullName(faker.name().fullName());
@@ -35,7 +34,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> findAllUser() {
-        return userRepository.findAll();
+        return userMapper.mapperToUserIgnorePasswordField(userRepository.findAll());
     }
 
     @Override

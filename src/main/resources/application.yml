@@ -1,0 +1,6 @@
+spring:
+  apiKey: AxDwHCfy0qRWh769Kg2Uzpppt2aiKsl2HyJzbQloYI7klJRbyuvwmtx43Df6hD2V
+  token: x7H6w6ayVtoYEOb7XlGkyjL8f5WQipGqK8ljQxdwOoPOhsyB4YMvkDRIi8EhOLpZ
+  jwt:
+    secret: yO1Oc4OLaMrB1ix8FlMPBhDKj7BOxXGoz5bFLfs2vaCu0xorApVLqxRlEujZ4H2zmxOZtgekPo0Mlbd6
+    expire: 864000000
