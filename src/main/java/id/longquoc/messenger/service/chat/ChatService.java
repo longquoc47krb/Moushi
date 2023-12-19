@@ -2,6 +2,7 @@ package id.longquoc.messenger.service.chat;
 
 import id.longquoc.messenger.dto.chat.ConversationDto;
 import id.longquoc.messenger.dto.chat.MessageDto;
+import id.longquoc.messenger.dto.chat.PrevMessageDto;
 import id.longquoc.messenger.dto.user.OnlineUserDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
 import id.longquoc.messenger.mapper.MessageMapper;
@@ -20,6 +21,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -64,6 +66,11 @@ public class ChatService implements IChatService {
 
     @Override
     public MessageDto saveOrUpdateMessage(User[] users, MessageDto message) {
+        return null;
+    }
+
+    @Override
+    public PrevMessageDto fetchPreviousChat(UUID conversationId, int page, String currentUser) {
         return null;
     }
 
