@@ -1,7 +1,7 @@
 package id.longquoc.messenger.service.chat;
 
-import id.longquoc.messenger.dto.ConversationDto;
-import id.longquoc.messenger.dto.MessageDto;
+import id.longquoc.messenger.dto.chat.ConversationDto;
+import id.longquoc.messenger.dto.chat.MessageDto;
 import id.longquoc.messenger.dto.user.OnlineUserDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
 import id.longquoc.messenger.mapper.MessageMapper;

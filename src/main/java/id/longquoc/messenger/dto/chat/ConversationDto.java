@@ -1,4 +1,4 @@
-package id.longquoc.messenger.dto;
+package id.longquoc.messenger.dto.chat;
 
 import id.longquoc.messenger.enums.TypingState;
 import lombok.*;
