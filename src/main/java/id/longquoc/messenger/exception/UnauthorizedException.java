@@ -1,6 +1,6 @@
 package id.longquoc.messenger.exception;
 
-public class UnauthorzedException extends RuntimeException {
+public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(String message) {
         super(message);
     }

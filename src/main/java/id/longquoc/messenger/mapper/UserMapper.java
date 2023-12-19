@@ -2,12 +2,15 @@ package id.longquoc.messenger.mapper;
 
 import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.payload.response.UserResponse;
 import id.longquoc.messenger.security.service.UserDetailsImpl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class UserMapper {
     public User mapUserDetailToUser(UserDetailsImpl userDetail) {
@@ -37,5 +40,13 @@ public class UserMapper {
     }
     public User mapperToUserIgnorePasswordField(User user){
         return new User(user.getId(),user.getFullName(), user.getUsername(), user.getEmail(), user.getRoles());
+    }
+    public UserResponse mapUserToUserResponse(User user){
+        return UserResponse.builder().fullName(user.getFullName()).id(user.getId()).build();
+    }
+    public List<UserResponse> mapUsers(List<User> users) {
+        return users.stream()
+                .map(this::mapUserToUserResponse)
+                .collect(Collectors.toList());
     }
 }

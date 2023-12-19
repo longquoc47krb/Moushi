@@ -8,10 +8,13 @@ import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.repository.UserRepository;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,4 +44,25 @@ public class UserService implements IUserService {
     public User findByEmailOrUsername(String email, String username) {
         return userRepository.findByEmailOrUsername(email, username);
     }
+    @Override
+    public User findUserdById(UUID id) {
+        return userRepository.findById(id).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Override
+    public List<User> findUsersById(List<UUID> participants) {
+        List<User> userList = new ArrayList<User>();
+        participants.forEach(
+                participant -> {
+                    if(this.findUserdById(participant) == null) {
+                        throw new IllegalArgumentException("User not found");
+                    }else{
+                        userList.add(this.findUserdById(participant));
+                    }
+
+                }
+        );
+        return userList;
+    }
+
 }

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,24 +22,24 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @NotBlank(message = "Name is mandatory")
     private String fullName;
-    @NotBlank(message = "Username is mandatory")
     private String username;
-    @NotBlank(message = "Password is mandatory")
     private String password;
-    @NotBlank(message = "Email is mandatory")
     private String email;
     @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     private List<Role> roles;
+    @ManyToMany(mappedBy = "participants" ,cascade = CascadeType.ALL)
+    private List<Conversation> conversationsByUserId;
 
-    @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages;
-    @OneToMany(mappedBy = "receiver")
-    private List<Message> receivedMessages;
+    private Instant lastOnline;
+    @Column(name = "profile_picture", columnDefinition = "LONGBLOB")
+    private byte[] profilePicture;
+    @Column(name = "current-sessions")
+    private Byte sessions = 0;
+
 
     public User(String fullName, String username, String password, String email) {
         this.fullName = fullName;

@@ -1,5 +1,5 @@
 package id.longquoc.messenger.enums;
 
-public enum TypingStatus {
+public enum TypingState {
     IDLE, TYPING
 }

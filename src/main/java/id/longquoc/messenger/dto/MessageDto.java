@@ -1,11 +1,17 @@
-package id.longquoc.messenger.payload.request;
+package id.longquoc.messenger.dto;
 
 import id.longquoc.messenger.enums.MessageState;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
-
+@Getter
+@Setter
+@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageDto {
     @NotNull
     private UUID id;

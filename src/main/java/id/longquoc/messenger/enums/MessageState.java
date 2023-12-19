@@ -1,5 +1,5 @@
 package id.longquoc.messenger.enums;
 
-public enum MessageStates {
+public enum MessageState {
     RECEIVED, DELIVERED, READ, DELETED, EDITED
 }
