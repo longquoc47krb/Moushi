@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface MessageRepository extends JpaRepository<Message, UUID> {
 
     @Query(value = """
-            SELECT id, sender, receiver, content
+            SELECT id, sender, content
             FROM Message m
             WHERE m.conversation = :conversationId
             """)

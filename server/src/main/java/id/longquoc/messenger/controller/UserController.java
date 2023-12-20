@@ -5,11 +5,15 @@ import id.longquoc.messenger.payload.response.ResponseObject;
 import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.UUID;
+@Slf4j
 @RestController
 @RequestMapping(path = "/v1/api/user")
 @RequiredArgsConstructor
@@ -23,12 +27,30 @@ public class UserController {
         }
         return ResponseEntity.ok(new ResponseObject(200, "Fetch all users successfully", users));
     }
+
     @GetMapping("/by-email-or-username")
     public ResponseEntity<?> findByEmailOrUsername(@RequestParam(value = "email", required = false) String email, @RequestParam(value = "username", required = false) String username ){
         User user = iUserService.findByEmailOrUsername(email, username);
+        SecurityContext holder = SecurityContextHolder.getContext();
+        log.info(holder.toString());
         if(user == null){
             return ResponseEntity.badRequest().body(new ResponseObject(404, "User not found", null));
         }
         return ResponseEntity.ok(new ResponseObject(200, "Fetch user successfully", user));
+    }
+    @GetMapping("/find-user-in-conversation/{conversationId}")
+    public ResponseEntity<?> findUsersInConversation(@PathVariable String conversationId) {
+        List<User> users = iUserService.findUsersInConversation(UUID.fromString(conversationId));
+        return ResponseEntity.ok(new ResponseObject(200, "Fetch users successfully", users));
+
+    }
+    @DeleteMapping("/{email}")
+    public ResponseEntity<?> deleteUserByEmail(@PathVariable String email){
+        var deleted = iUserService.deleteUserByEmail(email);
+        if(deleted){
+            return ResponseEntity.ok(new ResponseObject(200, "Deleted successfully"));
+        }
+        return ResponseEntity.badRequest().body(new ResponseObject(500, "Failed deleted"));
+
     }
 }

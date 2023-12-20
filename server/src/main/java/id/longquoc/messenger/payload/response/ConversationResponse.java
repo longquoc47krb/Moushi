@@ -4,6 +4,7 @@ import id.longquoc.messenger.model.Message;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Builder
 public class ConversationResponse {
     UUID id;
-    String name;
     List<UserResponse> participants;
+    Instant dateStarted;
     List<Message> messages;
 }

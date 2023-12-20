@@ -24,9 +24,6 @@ public class Message {
     @JoinColumn(name = "sender_id")
     private User sender;
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
-    @ManyToOne
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
     private String content;

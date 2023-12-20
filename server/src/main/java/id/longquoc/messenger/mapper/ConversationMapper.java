@@ -7,6 +7,7 @@ import id.longquoc.messenger.payload.response.ConversationResponse;
 import id.longquoc.messenger.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -21,8 +22,9 @@ public class ConversationMapper implements Function<Conversation, ConversationRe
         var participants = conversation.getParticipants().stream().map(User::getId).toList();
         return ConversationResponse.builder()
                 .id(conversation.getId())
-                .name(conversation.getName())
                 .participants(userMapper.mapUsers(userService.findUsersById(participants)))
+                .messages(conversation.getMessages())
+                .dateStarted(conversation.getDateStarted())
                 .build();
     }
     public List<ConversationResponse> mapConversations(List<Conversation> conversations) {
@@ -31,7 +33,7 @@ public class ConversationMapper implements Function<Conversation, ConversationRe
     public Conversation mapConversationRequest(ConversationRequest conversationRequest) {
         var users = userService.findUsersById(conversationRequest.getParticipants());
         return Conversation.builder()
-                .name(conversationRequest.getName())
+                .dateStarted(Instant.now())
                 .participants(users)
                 .build();
     }

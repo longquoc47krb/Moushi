@@ -9,6 +9,7 @@ import id.longquoc.messenger.service.chat.ChatService;
 import id.longquoc.messenger.service.chat.MessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,8 +29,8 @@ public class ChatController {
     private final ChatService chatService;
     private final MessageSender devMessageSender;
 
-    @MessageMapping("/chat")
-    public void sendMessage(@Payload MessageDto payload, Message<?> message){
+    @MessageMapping("/conversation/{conversationId}")
+    public void sendMessage(@DestinationVariable String id, @Payload MessageDto payload, Message<?> message){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         chatService.submitMessage(payload, accessor);
         devMessageSender.sendReceipt(accessor, "Processed by server");

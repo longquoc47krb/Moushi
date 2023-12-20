@@ -34,13 +34,17 @@ public class FriendRequestService implements IFriendRequestService {
         if (areFriends(sender, receiver)) {
             return ResponseEntity.badRequest().body(new ResponseObject(HttpStatus.BAD_REQUEST.value(), "Users are already friendship", new AreFriendShip(true)));
         }
+        var isSent = friendRequestRepository.findBySenderAndReceiverAndStatus(sender, receiver, FriendRequestStatus.PENDING);
+        if(isSent != null) {
+            return ResponseEntity.badRequest().body(new ResponseObject(HttpStatus.BAD_REQUEST.value(), "Friend request has sent already"));
+        }
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setSender(sender);
         friendRequest.setReceiver(receiver);
         friendRequest.setStatus(FriendRequestStatus.PENDING);
 
         friendRequestRepository.save(friendRequest);
-        return ResponseEntity.ok().body(new ResponseObject(HttpStatus.ACCEPTED.value(), "Sent request successfully"));
+        return ResponseEntity.ok().body(new ResponseObject(HttpStatus.ACCEPTED.value(), "Sent request successfully", friendRequest));
     }
     public void acceptFriendRequest(Long requestId) {
         FriendRequest friendRequest = friendRequestRepository.findById(requestId).orElseThrow(() -> new ResolutionException("Friend request not found"));

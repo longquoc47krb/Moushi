@@ -54,7 +54,10 @@ public class WebSocketStateListener {
         userRepository.setOnline(username, null, (byte) +1);
         //		Only send the list of online users if 1st session is created if there are more we don't care
         if(userRepository.getSessions(username) == 1){
-
+            userRepository.setOnline(username, Instant.now(), (byte) -1);
+            propagateStateChange(username, Instant.now());
+        } else {
+            userRepository.setOnline(username, null, (byte) -1);
         }
 
     }

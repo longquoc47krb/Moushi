@@ -37,6 +37,7 @@ public class AuthService implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final UserMapper userMapper;
+    private final MailService mailService;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Override
@@ -51,6 +52,7 @@ public class AuthService implements IAuthService {
         try {
             user.setRoles(Arrays.asList(Role.ROLE_BASIC));
             userRepository.save(user);
+            mailService.sendRegistrationSuccessEmail(registerDto.getEmail(), registerDto.getUsername());
             return ResponseEntity.ok(new ResponseObject(200, "Register new account successfully", user));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseObject(500, "Register failed", null));

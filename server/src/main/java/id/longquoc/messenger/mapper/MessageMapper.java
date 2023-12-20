@@ -18,7 +18,7 @@ public interface MessageMapper {
     MessageMapper INSTANCE = Mappers.getMapper(MessageMapper.class);
 
     @Mapping(source = "sender.username", target = "sender")
-    @Mapping(source = "receiver.username", target = "receiver")
+    @Mapping(source = "conversation.id", target = "conversationId")
     MessageDto toDto(Message message);
     default ConversationDto toConversationDto(Conversation conversation, String currentUser) {
         List<User> participants = conversation.getParticipants();

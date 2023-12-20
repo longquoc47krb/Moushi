@@ -10,4 +10,6 @@ public interface IUserService {
     User findByEmailOrUsername(String email, String username);
     User findUserdById(UUID id);
     List<User> findUsersById(List<UUID> participants);
+    List<User> findUsersInConversation(UUID conversationId);
+    boolean deleteUserByEmail(String email);
 }

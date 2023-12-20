@@ -3,6 +3,7 @@ package id.longquoc.messenger.config;
 import id.longquoc.messenger.common.Constants;
 import id.longquoc.messenger.filter.ApiKeyFilter;
 import id.longquoc.messenger.filter.AuthTokenFilter;
+import id.longquoc.messenger.security.CustomLogoutHandler;
 import id.longquoc.messenger.security.jwt.AuthEntryPointJwt;
 import id.longquoc.messenger.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -39,25 +40,29 @@ public class SecurityFilterChainConfig {
     private AuthEntryPointJwt unauthorizedHandler;
     @Autowired
     private AuthenticationProvider authenticationProvider;
-//    @Autowired
-//    private LogoutHandler logoutHandler;
-    private final String[] API_ENDPOINTS_NO_AUTH = {"/v1/api/auth/**"};
-    private final String[] API_ENDPOINTS_AUTH = {"/v1/api/user/**", "/v1/api/friendship/**","/v1/api/conversation/**"};
+    @Autowired
+    private CustomLogoutHandler logoutHandler;
+
+    private final String[] API_ENDPOINTS_NO_AUTH = {"/v1/api/auth/**", "/ws-chat/**"};
+    private final String[] API_ENDPOINTS_AUTH = {
+            "/v1/api/user/**",
+            "/v1/api/friendship/**",
+            "/v1/api/conversation/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable()).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests((registry) -> {
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests((registry) -> {
                     registry.requestMatchers(API_ENDPOINTS_NO_AUTH).permitAll();
                     registry.requestMatchers(API_ENDPOINTS_AUTH).hasAuthority(Constants.ROLE_BASIC);
-                    registry.requestMatchers("/ws/**").permitAll();
-                        }
+                    }
                 );
+        http.csrf((csrf) -> csrf.disable()).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider);
-//                        .logout(logout -> {
-//                            logout.logoutUrl("/v1/api/logout").addLogoutHandler(logoutHandler).logoutSuccessHandler((request,response,authentication)-> SecurityContextHolder.clearContext());
-//                        });
+                .authenticationProvider(authenticationProvider)
+                        .logout(logout -> {
+                            logout.logoutUrl("/v1/api/auth/logout").addLogoutHandler(logoutHandler).logoutSuccessHandler((request,response,authentication)-> SecurityContextHolder.clearContext());
+                        });
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

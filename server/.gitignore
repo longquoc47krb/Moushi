@@ -1,5 +1,7 @@
 HELP.md
 target/
+~mysql/
+data/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

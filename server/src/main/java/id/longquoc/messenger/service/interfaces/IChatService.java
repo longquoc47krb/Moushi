@@ -16,9 +16,9 @@ public interface IChatService {
     List<OnlineUserDto> fetchOnlineUsers();
 
     List<ConversationDto> fetchConversations(String name);
-    void createAndSendConversation(User[] users, StompHeaderAccessor accessor);
+    void createAndSendConversation(List<User>  users, StompHeaderAccessor accessor);
     void changeUserState(UserStateDto userStateDto, String username);
-    MessageDto saveOrUpdateMessage(User[] users, MessageDto message);
+    MessageDto saveOrUpdateMessage(List<User> users, MessageDto message);
     PrevMessageDto fetchPreviousChat(UUID conversationId, int page, String currentUser);
 
 

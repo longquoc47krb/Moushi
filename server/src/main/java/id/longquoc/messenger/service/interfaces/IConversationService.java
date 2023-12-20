@@ -11,6 +11,6 @@ public interface IConversationService {
     List<ConversationResponse> getAllConversations(UUID id);
     ConversationResponse createConversation(ConversationRequest request) throws Exception;
     Conversation getConversationById(UUID id);
-    boolean doesConversationExist(UUID sender, UUID receiver);
+    boolean participantsHasConversation(List<UUID> participantIds);
 
 }

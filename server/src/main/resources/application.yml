@@ -4,3 +4,4 @@ spring:
   jwt:
     secret: yO1Oc4OLaMrB1ix8FlMPBhDKj7BOxXGoz5bFLfs2vaCu0xorApVLqxRlEujZ4H2zmxOZtgekPo0Mlbd6
     expire: 864000000
+  senderEmail: quizzyapp2023@gmail.com

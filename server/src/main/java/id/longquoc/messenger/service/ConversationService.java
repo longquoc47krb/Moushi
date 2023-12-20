@@ -9,14 +9,11 @@ import id.longquoc.messenger.payload.response.ConversationResponse;
 import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.service.interfaces.IConversationService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -35,15 +32,18 @@ public class ConversationService implements IConversationService {
 
     @Override
     public ConversationResponse createConversation(ConversationRequest request) {
-        UUID senderId = request.getParticipants().get(0);
-        UUID receiverId = request.getParticipants().get(1);
-        var conversationExists = doesConversationExist(senderId, receiverId);
+        var conversationExists = participantsHasConversation(request.getParticipants());
         if(conversationExists){
             return null;
         }
         var conversationMapper = new ConversationMapper(userService, new UserMapper());
-        var conversation = conversationMapper.mapConversationRequest(request);
-        conversationRepository.save(conversation);
+        Conversation conversation = conversationMapper.mapConversationRequest(request);
+        try {
+            conversationRepository.save(conversation);
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+
         return conversationMapper.apply(conversation);
     }
 
@@ -53,23 +53,27 @@ public class ConversationService implements IConversationService {
     }
 
     @Override
-    public boolean doesConversationExist(UUID sender, UUID receiver) {
+    public boolean participantsHasConversation(List<UUID> participantIds)  {
         List<Conversation> allConversations = conversationRepository.findAll(); // Retrieve all conversations
-        for (Conversation conversation : allConversations) {
-            boolean senderFound = false;
-            boolean receiverFound = false;
 
-            for (User participant : conversation.getParticipants()) {
-                if (participant.getId().equals(sender)) {
-                    senderFound = true;
+        for (Conversation conversation : allConversations) {
+            boolean allMembersFound = true;
+            List<User> participantsInThisConversation = conversation.getParticipants();
+            for(UUID participantId : participantIds){
+                boolean found = false;
+                for(User participant : participantsInThisConversation){
+                    if(participant.getId().equals(participantId)){
+                        found = true;
+                        break;
+                    }
                 }
-                if (participant.getId().equals(receiver)) {
-                    receiverFound = true;
+                if (!found) {
+                    allMembersFound = false;
+                    break;
                 }
             }
-
-            if (senderFound && receiverFound) {
-                return true; // Conversation found with both sender and receiver
+            if (allMembersFound) {
+                return true;
             }
         }
 

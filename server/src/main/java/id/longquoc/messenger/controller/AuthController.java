@@ -27,5 +27,9 @@ public class AuthController {
         return iAuthService.login(loginDto);
     }
 
+    @PostMapping(value = "/logout")
+    void logout() {
+        throw new IllegalStateException("Add Spring Security to handle authentication");
+    }
 
 }

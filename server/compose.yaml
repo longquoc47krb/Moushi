@@ -1,8 +1,9 @@
 services:
   mysql:
-    container_name: 'messenger_db'
+    container_name: 'messenger'
     image: 'mysql:latest'
     environment:
+      - 'MYSQL_ALLOW_EMPTY_PASSWORD=yes'
       - 'MYSQL_DATABASE=messenger'
       - 'MYSQL_PASSWORD=secret'
       - 'MYSQL_ROOT_PASSWORD=secret'

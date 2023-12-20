@@ -2,9 +2,11 @@ package id.longquoc.messenger.service;
 
 import com.github.javafaker.Faker;
 import id.longquoc.messenger.mapper.UserMapper;
+import id.longquoc.messenger.model.Conversation;
 import id.longquoc.messenger.payload.request.RegisterDto;
 import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.repository.UserRepository;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class UserService implements IUserService {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ConversationRepository conversationRepository;
     public RegisterDto generateFakeUser() {
         RegisterDto user = new RegisterDto();
         user.setFullName(faker.name().fullName());
@@ -42,7 +45,7 @@ public class UserService implements IUserService {
 
     @Override
     public User findByEmailOrUsername(String email, String username) {
-        return userRepository.findByEmailOrUsername(email, username);
+        return userMapper.mapperToUserIgnorePasswordField(userRepository.findByEmailOrUsername(email, username));
     }
     @Override
     public User findUserdById(UUID id) {
@@ -63,6 +66,19 @@ public class UserService implements IUserService {
                 }
         );
         return userList;
+    }
+
+    @Override
+    public List<User> findUsersInConversation(UUID conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId).get();
+        return conversation.getParticipants();
+    }
+
+    @Override
+    public boolean deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        userRepository.delete(user);
+        return !userRepository.existsByEmail(email);
     }
 
 }

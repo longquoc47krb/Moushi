@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registration Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        .username {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Registration Successful</h2>
+    <p>Ayo <span class="username" th:text="${username}"></span>, your account has been successfully created!</p>
+    <!-- You can include more details about the account here -->
+    <!-- You can add links to navigate to other parts of your application -->
+</div>
+</body>
+</html>

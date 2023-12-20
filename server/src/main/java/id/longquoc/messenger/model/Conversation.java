@@ -8,16 +8,16 @@ import lombok.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-@Builder
 @Entity
-@Data
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String name;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_conversation",
@@ -26,7 +26,7 @@ public class Conversation {
     )
     private List<User> participants;
     @OneToMany(mappedBy = "conversation")
-    private List<Message> messages = new ArrayList<>();
+    private List<Message> messages;
     private boolean groupConversation = false;
     @NotNull
     private Instant dateStarted;
@@ -44,4 +44,8 @@ public class Conversation {
         return usernames;
     }
 
+    public Conversation(List<User> participants) {
+        this.participants = participants;
+        this.dateStarted = Instant.now();
+    }
 }

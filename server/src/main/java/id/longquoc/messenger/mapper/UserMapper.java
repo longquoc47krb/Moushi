@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,6 +48,11 @@ public class UserMapper {
     public List<UserResponse> mapUsers(List<User> users) {
         return users.stream()
                 .map(this::mapUserToUserResponse)
+                .collect(Collectors.toList());
+    }
+    public List<UUID> toListUUID(List<User> users){
+        return users.stream()
+                .map(User::getId)
                 .collect(Collectors.toList());
     }
 }
