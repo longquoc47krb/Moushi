@@ -3,16 +3,20 @@ package id.longquoc.messenger.service;
 import id.longquoc.messenger.mapper.ConversationMapper;
 import id.longquoc.messenger.mapper.UserMapper;
 import id.longquoc.messenger.model.Conversation;
+import id.longquoc.messenger.model.Message;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.payload.request.ConversationRequest;
 import id.longquoc.messenger.payload.response.ConversationResponse;
 import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.service.interfaces.IConversationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.lang.module.ResolutionException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -78,5 +82,26 @@ public class ConversationService implements IConversationService {
         }
 
         return false;
+    }
+
+    @Override
+    public void saveMessageToList(Message message, UUID conversationId) throws Exception {
+        try {
+            Optional<Conversation> conversationOptional = conversationRepository.findById(conversationId);
+            if (conversationOptional.isEmpty()) {
+                Conversation conversation = conversationOptional.get();
+                // Set the conversation for the message
+                message.setConversation(conversation);
+
+                List<Message> messages = conversation.getMessages();
+                // Add the message to the list
+                messages.add(message);
+                conversationRepository.save(conversation);
+            } else {
+                throw new Exception("Conversation with ID " + conversationId + " not found.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

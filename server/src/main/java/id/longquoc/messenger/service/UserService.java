@@ -51,6 +51,9 @@ public class UserService implements IUserService {
     public User findUserdById(UUID id) {
         return userRepository.findById(id).orElseThrow( () -> new UsernameNotFoundException("User not found"));
     }
+    public User findUserdByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 
     @Override
     public List<User> findUsersById(List<UUID> participants) {

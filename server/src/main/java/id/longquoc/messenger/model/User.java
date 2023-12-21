@@ -3,6 +3,7 @@ package id.longquoc.messenger.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import id.longquoc.messenger.enums.Role;
+import id.longquoc.messenger.enums.UserState;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,9 @@ public class User {
         @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
         @Column(name = "role")
         private List<Role> roles;
+        @Enumerated(EnumType.STRING)
+        @Column(name = "state")
+        private UserState userState;
         @JsonIgnore
         @ManyToMany(mappedBy = "participants" ,cascade = CascadeType.ALL)
         private List<Conversation> conversationsByUserId;

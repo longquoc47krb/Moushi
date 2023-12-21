@@ -43,7 +43,11 @@ public class SecurityFilterChainConfig {
     @Autowired
     private CustomLogoutHandler logoutHandler;
 
-    private final String[] API_ENDPOINTS_NO_AUTH = {"/v1/api/auth/**", "/ws-chat/**"};
+    private final String[] API_ENDPOINTS_NO_AUTH = {
+            "/v1/api/auth/**",
+            "/data/**",
+            "/ws-chat/**"
+    };
     private final String[] API_ENDPOINTS_AUTH = {
             "/v1/api/user/**",
             "/v1/api/friendship/**",
@@ -98,3 +102,15 @@ public class SecurityFilterChainConfig {
 
 
 }
+
+/*TODO: Đây là một phương thức cấu hình bảo mật trong Spring Security. Dưới đây là giải thích chi tiết:
+   @Bean: Annotation này cho biết rằng phương thức trả về một bean sẽ được quản lý bởi Spring.
+   - public SecurityFilterChain filterChain(HttpSecurity http) throws Exception: Phương thức này cấu hình chuỗi bộ lọc bảo mật (SecurityFilterChain) sử dụng đối tượng HttpSecurity.
+   - http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)): Điều này cấu hình chính sách tạo phiên là STATELESS, có nghĩa là Spring Security sẽ không tạo hoặc sử dụng bất kỳ phiên HTTP nào.
+   - authorizeHttpRequests((registry) -> {...}): Phương thức này cấu hình quyền truy cập vào các endpoint HTTP. Trong đó, API_ENDPOINTS_NO_AUTH được cho phép truy cập mà không cần xác thực và API_ENDPOINTS_AUTH yêu cầu quyền ROLE_BASIC.
+   - http.csrf((csrf) -> csrf.disable()): Điều này vô hiệu hóa bảo vệ chống tấn công CSRF (Cross-Site Request Forgery).
+   - http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler)): Điều này cấu hình điểm nhập xác thực để xử lý các ngoại lệ liên quan đến xác thực.
+   - http.authenticationProvider(authenticationProvider()): Điều này cấu hình nhà cung cấp xác thực tùy chỉnh.
+   - http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class): Điều này thêm một bộ lọc trước UsernamePasswordAuthenticationFilter. Bộ lọc authTokenFilter sẽ được gọi trước khi UsernamePasswordAuthenticationFilter được gọi.
+   - return http.build(): Cuối cùng, phương thức này xây dựng và trả về đối tượng SecurityFilterChain12.
+* */

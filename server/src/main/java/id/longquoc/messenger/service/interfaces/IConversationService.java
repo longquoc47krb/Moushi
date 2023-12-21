@@ -1,6 +1,7 @@
 package id.longquoc.messenger.service.interfaces;
 
 import id.longquoc.messenger.model.Conversation;
+import id.longquoc.messenger.model.Message;
 import id.longquoc.messenger.payload.request.ConversationRequest;
 import id.longquoc.messenger.payload.response.ConversationResponse;
 
@@ -12,5 +13,6 @@ public interface IConversationService {
     ConversationResponse createConversation(ConversationRequest request) throws Exception;
     Conversation getConversationById(UUID id);
     boolean participantsHasConversation(List<UUID> participantIds);
+    void saveMessageToList(Message message, UUID conversationId) throws Exception;
 
 }

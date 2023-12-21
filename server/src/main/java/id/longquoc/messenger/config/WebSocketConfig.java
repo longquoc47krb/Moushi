@@ -2,10 +2,12 @@ package id.longquoc.messenger.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.longquoc.messenger.config.websocket.CustomChannelInterceptor;
+import id.longquoc.messenger.config.websocket.SocketHandler;
 import io.micrometer.common.lang.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.Nullable;
@@ -22,39 +24,35 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.*;
 
 import java.util.List;
 
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
-@EnableScheduling
+@EnableWebSocket
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
     private final CustomChannelInterceptor channelInterceptor;
+    /*TODO:It declares a CustomChannelInterceptor field to add a custom filter for WebSocket message channels. */
 
-    private TaskScheduler taskScheduler;
-    @Autowired
-    public void setTaskExecutor(@Lazy TaskScheduler taskScheduler) {
-        this.taskScheduler = taskScheduler;
-    }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue")
-                .setHeartbeatValue(new long[] {20000, 15000})
-                .setTaskScheduler(taskScheduler);
+        config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }
-
+    /*TODO: register a WebSocket endpoint named /ws-chat,
+       allowing any origin, and using SockJS to support browsers
+       that do not support WebSocket.*/
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-chat").setAllowedOrigins("*").withSockJS();
     }
-
+    /*TODO: Add a message converter using Jackson to convert Java objects
+       to JSON and vice versa.*/
     @Override
     public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
         DefaultContentTypeResolver contentTypeResolver = new DefaultContentTypeResolver();
@@ -66,7 +64,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         return WebSocketMessageBrokerConfigurer.super.configureMessageConverters(messageConverters);
     }
-
+    /*TODO: It overrides the configureClientInboundChannel and configureClientOutboundChannel methods
+       to add filters for incoming and outgoing message channels.
+        This code uses StompHeaderAccessor to retrieve message types and log them.*/
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration
@@ -93,5 +93,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         log.debug("-> Outgoing -> " + accessor.getMessageType() + " ->");
                     }
                 });
+    }
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(myHandler(), "/data");
+    }
+    @Bean
+    public WebSocketHandler myHandler() {
+        return new SocketHandler();
     }
 }

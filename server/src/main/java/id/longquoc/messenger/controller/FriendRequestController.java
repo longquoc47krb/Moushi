@@ -1,9 +1,10 @@
 package id.longquoc.messenger.controller;
 
+import id.longquoc.messenger.dto.FriendRequestDto;
 import id.longquoc.messenger.model.FriendRequest;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.enums.FriendRequestStatus;
-import id.longquoc.messenger.payload.request.FriendRequestDto;
+import id.longquoc.messenger.payload.request.FriendRequestReq;
 import id.longquoc.messenger.payload.response.ResponseObject;
 import id.longquoc.messenger.service.FriendRequestService;
 import org.apache.coyote.BadRequestException;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/v1/api/friendship")
@@ -19,13 +21,13 @@ public class FriendRequestController {
     @Autowired
     private FriendRequestService friendService;
     @PostMapping("/requests")
-    public ResponseEntity<?> sendFriendRequest(@RequestBody FriendRequestDto friendRequestDto) throws BadRequestException {
-        return friendService.addFriendShip(friendRequestDto.getSenderId(), friendRequestDto.getReceiverId());
+    public ResponseEntity<?> sendFriendRequest(@RequestBody FriendRequestReq friendRequestDto) throws BadRequestException {
+        return friendService.sendFriendInvitation(friendRequestDto.getSenderId(), friendRequestDto.getReceiverId());
 
     }
-
-    public List<FriendRequest> findByReceiverAndStatus(User receiver, FriendRequestStatus status) {
-        return friendService.findByReceiverAndStatus(receiver, status);
+    @GetMapping("/{userId}")
+    public List<FriendRequestDto> findFriendRequestsByUserId(@PathVariable String userId) {
+        return friendService.findFriendRequestsByUserId(UUID.fromString(userId));
     }
 
     public List<FriendRequest> findBySenderAndStatus(User sender, FriendRequestStatus status) {

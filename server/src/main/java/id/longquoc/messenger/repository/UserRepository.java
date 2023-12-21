@@ -14,6 +14,16 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
  Boolean existsByEmail(String email);
  Boolean existsByUsername(String username);
+
+ @Query("""
+         FROM User u
+         WHERE u.username = :username
+         """)
+ User findByUsername(String username);
+ @Query("""
+         FROM User u
+         WHERE u.email = :email
+         """)
  User findByEmail(String email);
  @Query("""
          FROM User u

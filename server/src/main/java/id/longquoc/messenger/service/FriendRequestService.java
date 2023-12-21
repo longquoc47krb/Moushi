@@ -1,6 +1,8 @@
 package id.longquoc.messenger.service;
 
+import id.longquoc.messenger.dto.FriendRequestDto;
 import id.longquoc.messenger.enums.FriendshipRole;
+import id.longquoc.messenger.mapper.FriendRequestMapper;
 import id.longquoc.messenger.model.FriendRequest;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.enums.FriendRequestStatus;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendRequestService implements IFriendRequestService {
@@ -24,8 +27,10 @@ public class FriendRequestService implements IFriendRequestService {
     private UserRepository userRepository;
     @Autowired
     private FriendRequestRepository friendRequestRepository;
+    @Autowired
+    private FriendRequestMapper friendRequestMapper;
 
-    public ResponseEntity<?> addFriendShip(UUID senderId, UUID receiverId) {
+    public ResponseEntity<?> sendFriendInvitation(UUID senderId, UUID receiverId) {
         User sender = userRepository.findById(senderId).orElseThrow(() -> new ResolutionException("User not found"));
         User receiver = userRepository.findById(receiverId).orElseThrow(() -> new ResolutionException("User not found"));
         if (senderId.equals(receiverId)) {
@@ -35,7 +40,7 @@ public class FriendRequestService implements IFriendRequestService {
             return ResponseEntity.badRequest().body(new ResponseObject(HttpStatus.BAD_REQUEST.value(), "Users are already friendship", new AreFriendShip(true)));
         }
         var isSent = friendRequestRepository.findBySenderAndReceiverAndStatus(sender, receiver, FriendRequestStatus.PENDING);
-        if(isSent != null) {
+        if(!isSent.isEmpty()) {
             return ResponseEntity.badRequest().body(new ResponseObject(HttpStatus.BAD_REQUEST.value(), "Friend request has sent already"));
         }
         FriendRequest friendRequest = new FriendRequest();
@@ -70,5 +75,15 @@ public class FriendRequestService implements IFriendRequestService {
     @Override
     public FriendRequest findByReceiver(User receiver) {
         return friendRequestRepository.findByReceiver(receiver);
+    }
+
+    @Override
+    public List<FriendRequestDto> findFriendRequestsByUserId(UUID userId) {
+        User user = userRepository.findById(userId).get();
+        List<FriendRequest> friendRequests = friendRequestRepository.findByUserAsSenderOrReceiver(user);
+        List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
+        return friendRequests.stream()
+                .map(fr -> friendRequestMapper.toFriendRequestDto(fr))
+                .collect(Collectors.toList());
     }
 }

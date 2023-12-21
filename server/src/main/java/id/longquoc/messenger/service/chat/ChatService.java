@@ -1,15 +1,20 @@
 package id.longquoc.messenger.service.chat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import id.longquoc.messenger.dto.NotificationDTO;
 import id.longquoc.messenger.dto.chat.ConversationDto;
 import id.longquoc.messenger.dto.chat.MessageDto;
 import id.longquoc.messenger.dto.chat.PrevMessageDto;
 import id.longquoc.messenger.dto.user.OnlineUserDto;
+import id.longquoc.messenger.dto.user.UserChatDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
-import id.longquoc.messenger.enums.MessageState;
 import id.longquoc.messenger.mapper.MessageMapper;
 import id.longquoc.messenger.mapper.UserMapper;
 import id.longquoc.messenger.model.Conversation;
 import id.longquoc.messenger.model.Message;
+import id.longquoc.messenger.model.Notification;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.repository.MessageRepository;
@@ -23,15 +28,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -112,22 +113,84 @@ public class ChatService implements IChatService {
     @SneakyThrows
     @Transactional
     @Override
-    public void submitMessage(MessageDto messageDto, StompHeaderAccessor accessor){
-        List<User> users = messageDto.getStates() == null || messageDto.getStates().isEmpty()
-                ? userService.findUsersInConversation(UUID.fromString(messageDto.getConversationId())) : null;
-        MessageDto savedMessageToSend = saveOrUpdateMessage(users, messageDto);
-        assert users != null;
-        boolean conversationExists = conversationService.participantsHasConversation(userMapper.toListUUID(users));
-        if (!conversationExists) createAndSendConversation(Objects.requireNonNull(users), accessor);
-        Conversation conversation = conversationService.getConversationById(UUID.fromString(messageDto.getConversationId()));
-
-        simpMessagingTemplate.convertAndSend("/user/queue/conversations/" + conversation.getId(),
-                "[" + getTimestamp() + "]:" + messageDto.getSender() + ":" + messageDto.getContent()
-        );
-
+    public void processMessage(NotificationDTO notificationDTO, Principal principal){
+        Notification notification = new Notification();
+        notification.setTime(Instant.now());
+        notification.setType(notificationDTO.getType());
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> metadata = new HashMap<>();
+        String loggedUser = principal.getName();
+        try {
+            metadata = mapper.readValue(notificationDTO.getMetadata(), Map.class);
+            notification.addToMetadata("CONVERSATION", metadata.get("CONVERSATION"));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        switch (notificationDTO.getType()) {
+            case INCOMING_CALL:
+                notification.setContent(principal.getName() + " is calling you!");
+                sendToUser(loggedUser, notification, false);
+                break;
+            case ACCEPTED_CALL:
+                notification.setContent(principal.getName() + " accepted your call!");
+                sendToUser(loggedUser, notification, false);
+                break;
+            case CANCELLED_CALL:
+                notification.setContent(principal.getName() + " cancelled the call!");
+                sendToUser(loggedUser, notification, false);
+                break;
+            case REJECTED_CALL:
+                notification.setContent(principal.getName() + " rejected your call!");
+                sendToUser(loggedUser, notification, false);
+                break;
+            case INCOMING_MESSAGE:
+                notification.setContent("New message from " + loggedUser);
+                String message = metadata.get("MESSAGE");
+                notification.addToMetadata("MESSAGE", message);
+                notification.addToMetadata("USER", loggedUser);
+                sendToUser(loggedUser, notification, true);
+                break;
+        }
+    }
+    private void sendToUser(String sender, Notification notification, boolean saveMessage) {
+        Map<String, String > metadata = notification.getMetadata();
+        UUID conversationId = UUID.fromString(metadata.get("CONVERSATION"));
+        Set<User> userDTOS = getUsersInConversation(conversationId);
+        userDTOS.stream()
+                .map(User::getUsername)
+                .filter(s -> !s.equals(sender))
+                .forEach(username -> {
+                    notification.addToMetadata("USER", new Gson().toJson(
+                            new UserChatDto(null, sender)
+                    ));
+                    simpMessagingTemplate.convertAndSendToUser(username, "/queue/messages", notification);
+                    if (saveMessage) {
+                        String message = metadata.get("MESSAGE");
+                        storeMessage(message, conversationId, username);
+                    }
+                });
+    }
+    private Set<User> getUsersInConversation(UUID conversationId) {
+        Conversation conversation = conversationService.getConversationById(conversationId);
+        if (conversation != null) {
+            return new HashSet<>(conversation.getParticipants());
+        }
+        return new HashSet<>();
     }
     private User[] fetchUsersByUsername(String username){
         User user = userRepository.findByEmailOrUsername(username, username);
         return null;
+    }
+    @SneakyThrows
+    private void storeMessage(String content, UUID conversationId, String sender){
+        Conversation conversation = conversationService.getConversationById(conversationId);
+
+        Message message = new Message();
+        message.setSender(userRepository.findByUsername(sender));
+        message.setContent(content);
+        message.setConversation(conversation);
+        message.setCreatedAt(Instant.now());
+        message.setDateSent(Instant.now());
+        conversationService.saveMessageToList(message, conversationId);
     }
 }
