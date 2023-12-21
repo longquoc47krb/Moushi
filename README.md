@@ -1,4 +1,4 @@
-# Real-time Messaging Application - Mensajero App
+# Real-time Messaging Application - Moushi App
  
 ## Introduction
 This is a real-time messaging application built using Next.js for the Frontend, Spring Boot for the Backend, and MySQL for data storage.
