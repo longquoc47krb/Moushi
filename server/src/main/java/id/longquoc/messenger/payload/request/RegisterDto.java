@@ -25,7 +25,7 @@ public class RegisterDto {
     @NotEmpty(message = "Password is required")
     @Min(value = 8, message = "Password must have at least 8 characters")
     private String password;
-
+    private String profilePicture;
     @NotEmpty(message = "Email is required")
     private String email;
     @NotEmpty(message = "Role is required")

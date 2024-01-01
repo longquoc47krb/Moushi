@@ -4,7 +4,7 @@ import { NextComponentType } from "next";
 import { useRouter } from "next/navigation";
 import { Component } from "react";
 interface AuthProps {
-  isLoggedIn: boolean;
+  isLoggedIn?: boolean;
 }
 function withAuth(Component: any) {
   const Auth = (props: AuthProps) => {

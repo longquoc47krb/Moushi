@@ -43,8 +43,8 @@ public class User {
         private List<Conversation> conversationsByUserId;
 
         private Instant lastOnline;
-        @Column(name = "profile_picture", columnDefinition = "LONGBLOB")
-        private byte[] profilePicture;
+        @Column(name = "profile_picture")
+        private String profilePicture;
         @Column(name = "current-sessions")
         private Byte sessions = 0;
 

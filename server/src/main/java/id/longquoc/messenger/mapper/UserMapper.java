@@ -5,6 +5,7 @@ import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.payload.response.UserResponse;
 import id.longquoc.messenger.security.service.UserDetailsImpl;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class UserMapper {
         user.setFullName(userDetail.getFullName());
         user.setUsername(userDetail.getUsername());
         user.setEmail(userDetail.getEmail());
+        user.setProfilePicture(userDetail.getProfilePicture());
         if(!ignorePassword){
             user.setPassword(userDetail.getPassword());
         }
@@ -54,5 +56,8 @@ public class UserMapper {
         return users.stream()
                 .map(User::getId)
                 .collect(Collectors.toList());
+    }
+    public UserDetails toUserDetails(User user) {
+        return UserDetailsImpl.build(user);
     }
 }

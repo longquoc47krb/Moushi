@@ -61,7 +61,7 @@ const Page = () => {
     return (
         <DashboardLayout>
             <MessageList />
-            <ChatBox conversation={conversation} />
+            {/* <ChatBox conversation={conversation} /> */}
         </DashboardLayout>
     );
 }

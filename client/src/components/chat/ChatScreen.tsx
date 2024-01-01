@@ -17,16 +17,12 @@ function ChatScreen() {
   const [user, setUser] = useState(null);
   const { isConnected } = useStompContext();
 
-  const receiver = {
-    avatar: "https://github.com/shadcn.png",
-    name: "John Doe"
-  }
 
   return (
     <div className="flex gap-x-4 p-2 h-screen bg-gray-300">
       <Profile />
       <MessageList />
-      <ChatBox receiver={receiver} status="online" />
+      <ChatBox />
     </div>
   );
 }

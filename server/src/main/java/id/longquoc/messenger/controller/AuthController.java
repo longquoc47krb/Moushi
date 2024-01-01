@@ -22,6 +22,10 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody RegisterDto registerDto){
         return iAuthService.registerUser(registerDto);
     }
+    @PostMapping("/register/fake")
+    public ResponseEntity<?> registerFake(@RequestBody RegisterDto registerDto){
+        return userService.generateFakeUser();
+    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
         return iAuthService.login(loginDto);

@@ -10,6 +10,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { loginSchema } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
+import { useCookies } from "react-cookie"
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,8 +33,8 @@ function Page() {
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
   });
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { push } = useRouter()
+  const [cookie, setCookie] = useCookies(["currentUser"])
   const { toast } = useToast();
   const onSubmit = async (data: LoginFormInputs) => {
     // Handle form submission logic here (e.g., login request)
@@ -45,9 +47,16 @@ function Page() {
         </div>
       ),
     });
+    // const response = await signIn("credentials", {
+    //   email: data.email,
+    //   password: data.password,
+    //   callbackUrl: "/",
+    //   redirect: false,
+    // })
+    // console.log("Sign in response:", response);
     await loginApi({
       credential: data.email,
-      password: data.password,
+      password: data.password
     }).then((res: any) => {
       if (res.status === 201) {
         toast({
@@ -60,6 +69,12 @@ function Page() {
           ),
         });
         localStorage.setItem("accessToken", res?.data?.accessToken);
+        setCookie("currentUser", JSON.stringify(res.data.user), {
+          path: "/",
+          maxAge: 3600 * 24, // Expires after 24hr
+          sameSite: true,
+        })
+        push("/u")
       } else {
         toast({
           variant: "destructive",
@@ -135,7 +150,7 @@ function Page() {
           Please sign up if you don't have an account yet!{" "}
           <a
             className="underline text-sky-600 cursor-pointer"
-            onClick={() => router.push("/sign-up")}
+            onClick={() => push("/sign-up")}
           >
             Register
           </a>

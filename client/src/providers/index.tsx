@@ -1,18 +1,19 @@
 "use client";
 "use client";
 
-import { SessionProvider } from "next-auth/react";
 import { StompProvider } from "../context/useStompContext";
 import { ThemeProvider } from "@/context/useThemeContext";
-import { DataProvider } from "@/context/useDataContext";
+import { AuthProvider } from "@/context/useAuthContext";
+import { CookiesProvider } from "react-cookie"
 
 export function Providers({ children }: any) {
   return (
     <ThemeProvider>
-      <DataProvider>
-        <SessionProvider>
+      <AuthProvider>
+        <CookiesProvider>
           <StompProvider>{children}</StompProvider>
-        </SessionProvider></DataProvider>
+        </CookiesProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

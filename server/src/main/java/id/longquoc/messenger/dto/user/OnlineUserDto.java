@@ -11,5 +11,5 @@ import lombok.*;
 public class OnlineUserDto {
     private String username;
     private String fullName;
-    private byte[] profilePicture;
+    private String profilePicture;
 }

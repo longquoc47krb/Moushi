@@ -2,10 +2,13 @@ package id.longquoc.messenger.controller;
 
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.payload.response.ResponseObject;
+import id.longquoc.messenger.security.jwt.JwtUtils;
 import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.interfaces.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,5 +55,19 @@ public class UserController {
         }
         return ResponseEntity.badRequest().body(new ResponseObject(500, "Failed deleted"));
 
+    }
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+        var user = iUserService.currentUser(request);
+        if(user != null){
+            return ResponseEntity.ok(new ResponseObject(200, "Get current user successfully", user));
+        }
+        return ResponseEntity.badRequest().body(new ResponseObject(500, "Failed fetch"));
+
+    }
+    @GetMapping("/friend-list/{userId}")
+    public ResponseEntity<?> getFriendList(@PathVariable String userId) throws BadRequestException {
+        List<User> friends = iUserService.getFriendList(UUID.fromString(userId));
+        return ResponseEntity.ok().body(new ResponseObject(200, "Fetch friends successfully", friends));
     }
 }

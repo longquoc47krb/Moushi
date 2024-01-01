@@ -7,16 +7,17 @@ import { ITheme } from "@/interfaces";
 import clsx from "clsx";
 import { useThemeContext } from "@/context/useThemeContext";
 import { useRouter } from "next/navigation";
-import { useDataContext } from "@/context/useDataContext";
+import { useAuthContext } from "@/context/useAuthContext";
+import LogoutDialog from "../LogoutDialog";
 const Profile = ({ pathname }: { pathname?: string | undefined }) => {
-  const { currentUser } = useDataContext()
+  const { currentUser } = useAuthContext()
   const router = useRouter()
   const { theme } = useThemeContext()
   return (
     <div className={clsx("h-full py-2 rounded-lg flex flex-col")} style={theme.profileStyle}>
       <div className="px-4">
         <Avatar>
-          <AvatarImage src={currentUser.avatar} />
+          <AvatarImage src={currentUser?.profilePicture} />
           <AvatarFallback>VN</AvatarFallback>
         </Avatar>
       </div>
@@ -27,14 +28,16 @@ const Profile = ({ pathname }: { pathname?: string | undefined }) => {
           <li className={clsx("cursor-pointer", { "active": pathname?.match(/^\/u\/[a-zA-Z0-9]+$/) })} onClick={() => router.push("/u")}>
             <IoMdChatbubbles />
           </li>
-          <li className={clsx("cursor-pointer", { "active": pathname?.match(/^\/friends\/[a-zA-Z0-9]+$/) })} onClick={() => router.push("/friends")}>
+          <li className={clsx("cursor-pointer", { "active": pathname?.match(/^\/friends\/[a-zA-Z0-9]+$/) })} onClick={() => router.push(`/friends/${currentUser.id}`)}>
             <IoPeopleSharp />
           </li>
           <li className={clsx("cursor-pointer", { "active": pathname === "/setting" })} onClick={() => router.push("/settings")}>
             <IoSettings />
           </li></div>
-        <li><PiSignOutBold />
-        </li>
+        <LogoutDialog>
+          <li><PiSignOutBold />
+          </li>
+        </LogoutDialog>
       </ul>
     </div>
   );

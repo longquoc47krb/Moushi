@@ -11,13 +11,15 @@ const axiosClient = axios.create({
 });
 
 
+
 // Add a request interceptor
 axiosClient.interceptors.request.use(
     function (config) {
         if (!config?.headers) {
             throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
         }
-        // config.headers.Authorization = token ?? "";
+        const token = localStorage.getItem("accessToken");
+        config.headers.Authorization = `Bearer ${token}` ?? "";
         config.headers["Content-Type"] = "application/json";
         config.headers["x-api-key"] = process.env.NEXT_PUBLIC_API_KEY;
         return config;

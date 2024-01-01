@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class UserDetailsImpl implements UserDetails {
     private UUID id;
     private String fullName;
     private String username;
     private String email;
+    private String profilePicture;
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
@@ -34,6 +36,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getFullName(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getProfilePicture(),
                 user.getPassword(),
                 authorities);
     }

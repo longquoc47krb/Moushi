@@ -24,7 +24,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const selectTheme = (theme: any) => {
         setTempTheme(theme)
     }
-    console.log({ tempTheme, currentTheme })
     const theme = tempTheme ?? currentTheme;
     return (
         <ThemeContext.Provider value={{ theme, selectTheme }}>

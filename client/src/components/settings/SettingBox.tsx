@@ -3,7 +3,6 @@ import ChangeThemeBox from "./change-theme";
 
 const SettingBox = () => {
     let hash = window.location.hash;
-    console.log({ hash })
     const switchSettingMode = (mode: string) => {
         switch (mode) {
             case "#change-theme":

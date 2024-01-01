@@ -2,7 +2,6 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import moment from 'moment';
 import { IConversationDto } from '@/interfaces';
-import { useDataContext } from '@/context/useDataContext';
 import { useRouter } from 'next/navigation';
 import Verified from '../Verified';
 
@@ -16,7 +15,6 @@ interface InboxProps {
     conversation: Conversation
 }
 function InboxItem({ conversation }: InboxProps) {
-    const { currentUser } = useDataContext()
     const router = useRouter()
     const myFriend = conversation?.users?.filter(u => u.id != currentUser.id)[0];
     const lastMessage = conversation?.messages[conversation?.messages?.length - 1]

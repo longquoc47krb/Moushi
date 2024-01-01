@@ -7,12 +7,11 @@ import MessageInput from "./MessageInput";
 import { useForm } from "react-hook-form";
 import { MessageInputField } from "../ui/input";
 import { messages, user2 } from "@/mocks/messageList";
-import { useDataContext } from "@/context/useDataContext";
 import { getReceiver } from "@/lib/utils";
 import Verified from "../Verified";
 
 interface ChatBoxProps {
-    conversation: any;
+    conversation?: any;
 
 }
 interface Content {
@@ -34,7 +33,6 @@ const ChatBox = ({ conversation }: ChatBoxProps) => {
         register,
         formState: { errors },
     } = useForm<Content>();
-    const { currentUser } = useDataContext()
     const myFriend = getReceiver(conversation.participants, currentUser);
     return (
         <div className="bg-gray-100 rounded-lg p-4 w-full h-full relative">

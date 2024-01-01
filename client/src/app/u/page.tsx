@@ -10,7 +10,6 @@ const Page = () => {
     return (
         <DashboardLayout>
             <MessageList />
-            <HomeBox />
         </DashboardLayout>
     );
 }

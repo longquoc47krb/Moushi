@@ -7,6 +7,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,18 @@ public class JwtUtils {
     public String getEmailFromJwt(String token) {
         return Jwts.parserBuilder().setSigningKey(jwtKey()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+    public String getJwtFromHeader(HttpServletRequest request) {
+        String ContentType = request.getContentType();
+        System.out.println(ContentType);
+        String header = request.getHeader("Authorization");
+        if (header != null)
+        {
+            System.out.println(header);
+            return header.split(" ")[1].trim();
+            //return header;
+        }
+        return null;
     }
     public boolean validateJwtToken(String authToken) {
         try {

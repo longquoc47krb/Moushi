@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class FriendRequestDto {
+    private Long id;
     private User sender;
     private User receiver;
     private FriendRequestStatus status;

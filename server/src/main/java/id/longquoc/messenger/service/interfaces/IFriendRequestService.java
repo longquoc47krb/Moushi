@@ -13,5 +13,7 @@ public interface IFriendRequestService {
 
     List<FriendRequest> findBySenderAndStatus(User sender, FriendRequestStatus status);
     FriendRequest findByReceiver(User receiver);
+    FriendRequest findFriendRequestById(Long id);
     List<FriendRequestDto> findFriendRequestsByUserId(UUID userId);
+    void deleteFriendRequestById(Long requestId);
 }

@@ -9,7 +9,7 @@ const Page = () => {
     return (
         <DashboardLayout>
             <SettingList />
-            <SettingBox />
+            {/* <SettingBox /> */}
         </DashboardLayout>
     );
 }
