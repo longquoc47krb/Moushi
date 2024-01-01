@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +51,10 @@ public class AuthService implements IAuthService {
         }
         User user = new User(registerDto.getFullName(), registerDto.getUsername(), passwordEncoder.encode(registerDto.getPassword()), registerDto.getEmail());
         try {
-            user.setRoles(Arrays.asList(Role.ROLE_BASIC));
+            user.setRoles(List.of(Role.ROLE_BASIC));
             userRepository.save(user);
-            mailService.sendRegistrationSuccessEmail(registerDto.getEmail(), registerDto.getUsername());
+            //            TODO: Mail service error
+            //            mailService.sendRegistrationSuccessEmail(registerDto.getEmail(), registerDto.getUsername());
             return ResponseEntity.ok(new ResponseObject(200, "Register new account successfully", user));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseObject(500, "Register failed", null));

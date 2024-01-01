@@ -6,6 +6,7 @@ import id.longquoc.messenger.filter.AuthTokenFilter;
 import id.longquoc.messenger.security.CustomLogoutHandler;
 import id.longquoc.messenger.security.jwt.AuthEntryPointJwt;
 import id.longquoc.messenger.security.service.UserDetailsServiceImpl;
+import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -26,6 +28,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -46,7 +51,7 @@ public class SecurityFilterChainConfig {
     private final String[] API_ENDPOINTS_NO_AUTH = {
             "/v1/api/auth/**",
             "/data/**",
-            "/ws-chat/**"
+            "/ws/**"
     };
     private final String[] API_ENDPOINTS_AUTH = {
             "/v1/api/user/**",
@@ -58,10 +63,11 @@ public class SecurityFilterChainConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests((registry) -> {
                     registry.requestMatchers(API_ENDPOINTS_NO_AUTH).permitAll();
-                    registry.requestMatchers(API_ENDPOINTS_AUTH).hasAuthority(Constants.ROLE_BASIC);
+//                    registry.requestMatchers(API_ENDPOINTS_AUTH).hasAuthority(Constants.ROLE_BASIC);
+                    registry.requestMatchers(API_ENDPOINTS_AUTH).permitAll();
                     }
                 );
-        http.csrf((csrf) -> csrf.disable()).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
+        http.csrf(AbstractHttpConfigurer::disable).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                         .logout(logout -> {

@@ -10,3 +10,4 @@ services:
       - 'MYSQL_USER=longquoc'
     ports:
       - '3306'
+    

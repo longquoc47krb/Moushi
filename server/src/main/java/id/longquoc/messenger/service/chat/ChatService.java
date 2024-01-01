@@ -11,7 +11,6 @@ import id.longquoc.messenger.dto.user.OnlineUserDto;
 import id.longquoc.messenger.dto.user.UserChatDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
 import id.longquoc.messenger.mapper.MessageMapper;
-import id.longquoc.messenger.mapper.UserMapper;
 import id.longquoc.messenger.model.Conversation;
 import id.longquoc.messenger.model.Message;
 import id.longquoc.messenger.model.Notification;
@@ -20,7 +19,6 @@ import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.repository.MessageRepository;
 import id.longquoc.messenger.repository.UserRepository;
 import id.longquoc.messenger.service.ConversationService;
-import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.interfaces.IChatService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +36,11 @@ import java.util.*;
 @Slf4j
 @Service
 public class ChatService implements IChatService {
-    private static final int MAX_PAGE_SIZE = 3;
     private final ConversationRepository conversationRepository;
     private final ConversationService conversationService;
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final MessageSender devMessageSender;
-    private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final UserService userService;
     @Override
     public List<OnlineUserDto> fetchOnlineUsers() {
 
@@ -177,10 +171,7 @@ public class ChatService implements IChatService {
         }
         return new HashSet<>();
     }
-    private User[] fetchUsersByUsername(String username){
-        User user = userRepository.findByEmailOrUsername(username, username);
-        return null;
-    }
+
     @SneakyThrows
     private void storeMessage(String content, UUID conversationId, String sender){
         Conversation conversation = conversationService.getConversationById(conversationId);

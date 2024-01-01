@@ -31,9 +31,9 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         if (command != null && command.equals(StompCommand.CONNECT)) {
 
             String  authHeader = accessor.getFirstNativeHeader("Authorization");
-
+            String  apiKey = accessor.getFirstNativeHeader("x-api-key");
             if (authHeader == null) devMessageSender.sendError(accessor, "Missing Authorization Header (Bearer)");
-
+            if (apiKey == null) devMessageSender.sendError(accessor, "Missing api key");
             try {
                 Authentication authenticatedUser = authService.authenticateUserFromHeaderAuth(authHeader);
                 if (accessor.getUser() == null) accessor.setUser(new UserPrincipal(authenticatedUser.getName()));

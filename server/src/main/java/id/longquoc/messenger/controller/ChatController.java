@@ -2,13 +2,11 @@ package id.longquoc.messenger.controller;
 
 import id.longquoc.messenger.dto.NotificationDTO;
 import id.longquoc.messenger.dto.chat.ConversationDto;
-import id.longquoc.messenger.dto.chat.MessageDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
 import id.longquoc.messenger.service.chat.ChatService;
 import id.longquoc.messenger.service.chat.MessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -40,7 +38,8 @@ public class ChatController {
     @MessageMapping("/online")
     public void onlineUsers(Message<?> message){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        messagingTemplate.convertAndSend("/topic/online", chatService.fetchOnlineUsers());
+//        messagingTemplate.convertAndSend("/topic/online", chatService.fetchOnlineUsers());
+        messagingTemplate.convertAndSend("/topic/online", "Co 1 nguoi online");
         devMessageSender.sendReceipt(accessor, "Processed by server");
     }
     @MessageMapping("/change-user-state")

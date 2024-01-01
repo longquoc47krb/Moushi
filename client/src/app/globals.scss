@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.center-y {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.lined-text {
+  position: relative;
+  display: inline-block;
+  padding: 0 15px; /* Adjust padding as needed */
+}
+
+.lined-text::before,
+.lined-text::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  border-top: 1px solid black; /* Change color and thickness as desired */
+  width: 40%;
+}
+
+.lined-text::before {
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.lined-text::after {
+  right: 0;
+  transform: translateY(-50%);
+}
+.text-gradient {
+  background: -webkit-linear-gradient(#0284c7, #fffde4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* Loading */
+.cube-loader {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: auto;
+}
+
+.cube {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  background-color: #333;
+  border: 2px solid #fff;
+  animation: foldCube 2.4s infinite linear;
+}
+
+/* Individual cube positioning */
+.cube1 {
+  top: 0;
+  left: 0;
+  transform-origin: 100% 100%;
+}
+.cube2 {
+  top: 0;
+  right: 0;
+  transform-origin: 0 100%;
+}
+.cube3 {
+  bottom: 0;
+  right: 0;
+  transform-origin: 0 0;
+}
+.cube4 {
+  bottom: 0;
+  left: 0;
+  transform-origin: 100% 0;
+}
+
+/* Keyframes for the folding animation */
+@keyframes foldCube {
+  0%,
+  10% {
+    transform: perspective(140px) rotateX(-180deg);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    transform: perspective(140px) rotateX(0deg);
+    opacity: 1;
+  }
+  90%,
+  100% {
+    transform: perspective(140px) rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+/* Animation delay for each cube */
+.cube1 {
+  animation-delay: 0.3s;
+}
+.cube2 {
+  animation-delay: 0.6s;
+}
+.cube3 {
+  animation-delay: 0.9s;
+}
+.cube4 {
+  animation-delay: 1.2s;
+}
+/* Profile */
+.profile-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  li {
+    padding: 1rem;
+    &:hover {
+      background-color: rgba(40, 40, 40, 0.142);
+      transition: all 0.5s ease;
+    }
+  }
+  & .active {
+    background-color: rgba(40, 40, 40, 0.398);
+    transition: all 0.5s ease;
+  }
+}
+.chat-bubble {
+  padding: 10px 14px;
+  margin: 10px 0 0 10px;
+  position: relative;
+  animation: fadeIn 1s ease-in;
+  width: fit-content;
+  max-width: 40vw;
+  font-size: 14px;
+  border-radius: 20px;
+}
+.abs-centerx {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.abs-centery {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.ellipsis-one-line {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 14vw;
+}
+@keyframes zoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.zoom {
+  animation: zoom 2s infinite;
+}
+.red-gradient {
+  background: linear-gradient(145deg, #e00000, #bc0000);
+  box-shadow: 6px 6px 12px #540000;
+}

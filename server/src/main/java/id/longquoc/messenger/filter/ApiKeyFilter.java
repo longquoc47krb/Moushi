@@ -24,7 +24,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private String validKey;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String apiKey = request.getHeader(API_KEY_HEADER);
         final Map<String, Object> body = new HashMap<>();
         if (StringUtils.isEmpty(apiKey)) {
