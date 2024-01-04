@@ -1,12 +1,13 @@
 package id.longquoc.messenger.controller;
 
 import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.payload.request.PasswordDto;
+import id.longquoc.messenger.payload.response.FriendInvitationResponse;
 import id.longquoc.messenger.payload.response.ResponseObject;
-import id.longquoc.messenger.security.jwt.JwtUtils;
-import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -69,5 +70,20 @@ public class UserController {
     public ResponseEntity<?> getFriendList(@PathVariable String userId) throws BadRequestException {
         List<User> friends = iUserService.getFriendList(UUID.fromString(userId));
         return ResponseEntity.ok().body(new ResponseObject(200, "Fetch friends successfully", friends));
+    }
+    @SneakyThrows
+    @GetMapping("/friend-requests/{userId}")
+    public ResponseEntity<?> getFriendRequests(@PathVariable String userId) {
+        List<FriendInvitationResponse> friendRequestList = iUserService.getFriendRequestList(UUID.fromString(userId));
+        return ResponseEntity.ok().body(new ResponseObject(200, "Fetch friend requests successfully", friendRequestList));
+
+    }
+    @PutMapping("/update-password/{userId}")
+    public ResponseEntity<?> updatePassword(@PathVariable String userId, @RequestBody PasswordDto passwordDto){
+        User user = iUserService.updateNewPassword(UUID.fromString(userId), passwordDto.getNewPassword());
+        if(user == null){
+            return ResponseEntity.badRequest().body(new ResponseObject(400, "Update password failed"));
+        }
+        return ResponseEntity.ok().body(new ResponseObject(200, "Update password successfully", user));
     }
 }

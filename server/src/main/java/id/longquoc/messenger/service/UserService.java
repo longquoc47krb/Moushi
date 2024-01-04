@@ -3,27 +3,26 @@ package id.longquoc.messenger.service;
 import com.github.javafaker.Faker;
 import id.longquoc.messenger.dto.FriendRequestDto;
 import id.longquoc.messenger.enums.FriendRequestStatus;
+import id.longquoc.messenger.enums.UserState;
 import id.longquoc.messenger.mapper.UserMapper;
 import id.longquoc.messenger.model.Conversation;
-import id.longquoc.messenger.model.FriendRequest;
-import id.longquoc.messenger.payload.request.RegisterDto;
 import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.payload.response.FriendInvitationResponse;
 import id.longquoc.messenger.payload.response.ResponseObject;
 import id.longquoc.messenger.repository.ConversationRepository;
 import id.longquoc.messenger.repository.UserRepository;
 import id.longquoc.messenger.security.jwt.JwtUtils;
-import id.longquoc.messenger.security.service.UserDetailsImpl;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +44,7 @@ public class UserService implements IUserService {
         user.setFullName(faker.name().fullName());
         user.setUsername(faker.name().username());
         user.setEmail(faker.name().username() + "@gmail.com");
-        user.setPassword("Password#12345");
+        user.setPassword(passwordEncoder.encode("Password#12345"));
         user.setProfilePicture(faker.avatar().image());
         user.setRoles(List.of(Role.ROLE_BASIC));
 
@@ -73,7 +72,7 @@ public class UserService implements IUserService {
     public User findUserdById(UUID id) {
         return userRepository.findById(id).orElseThrow( () -> new UsernameNotFoundException("User not found"));
     }
-    public User findUserdByUsername(String username) {
+    public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -124,13 +123,47 @@ public class UserService implements IUserService {
         List<FriendRequestDto> acceptedRequests = friendRequests.stream().filter(fr -> fr.getStatus().equals(FriendRequestStatus.ACCEPTED)).toList();
 
         return acceptedRequests.stream()
-                .map(request -> {
-                    if (request.getReceiver().equals(user)) {
-                        return request.getSender();
-                    } else {
-                        return request.getReceiver();
-                    }
-                }).collect(Collectors.toList());
+                .map(request -> request.getReceiver().equals(user) ? request.getSender() : request.getReceiver()).collect(Collectors.toList());
     }
+
+    @Override
+    public User updateUserStateAndLastLogin(String username, UserState status, Instant date) {
+        User existingUser = userRepository.findByUsername(username);
+        if(status.equals(UserState.ONLINE)){
+            existingUser.setUserState(UserState.ONLINE);
+        } else if (status.equals(UserState.OFFLINE)) {
+            existingUser.setUserState(UserState.OFFLINE);
+        }
+        existingUser.setLastOnline(date);
+
+        return userRepository.save(existingUser);
+    }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        return userRepository.findByUsernameAndPassword(username, encodedPassword);
+    }
+
+    @Override
+    public User updateNewPassword(UUID userId, String password) {
+        User user = userRepository.findById(userId).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+        if(passwordEncoder.encode(user.getPassword()).equals(passwordEncoder.encode(password))){
+            return null;
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        return userRepository.save(user);
+    }
+
+    @Override
+    public List<FriendInvitationResponse> getFriendRequestList(UUID userId) {
+        List<FriendRequestDto> friendRequests = friendRequestService.findFriendRequestsByUserId(userId).stream().filter(friendRequest -> friendRequest.getReceiver().getId().equals(userId) && friendRequest.getStatus().equals(FriendRequestStatus.PENDING)).collect(Collectors.toList());
+        return friendRequests.stream().map(friendRequestDto -> FriendInvitationResponse.builder()
+                .requestId(friendRequestDto.getId())
+                .sender(friendRequestDto.getSender())
+                .build()).distinct().toList();
+    }
+
+
 
 }

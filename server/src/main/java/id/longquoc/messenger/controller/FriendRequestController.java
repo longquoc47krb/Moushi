@@ -34,9 +34,9 @@ public class FriendRequestController {
     public List<FriendRequest> findBySenderAndStatus(User sender, FriendRequestStatus status) {
         return friendService.findBySenderAndStatus(sender, status);
     }
-    @PutMapping("/accept/{requestId}")
+    @PutMapping("/change-status-friend-request/{requestId}")
     public ResponseEntity<?> acceptFriendRequest(@PathVariable Long requestId, @RequestBody SenderReq senderReq) throws BadRequestException {
-       return friendService.acceptFriendRequest(requestId, senderReq);
+       return friendService.changeFriendRequestStatus(requestId, senderReq);
     }
     @DeleteMapping("/{friendRequestId}")
     public ResponseEntity<String> deleteFriendRequest(@PathVariable String friendRequestId) {

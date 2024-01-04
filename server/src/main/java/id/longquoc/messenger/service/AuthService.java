@@ -90,7 +90,6 @@ public class AuthService implements IAuthService {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
-
         }
         return SecurityContextHolder.getContext().getAuthentication();
     }

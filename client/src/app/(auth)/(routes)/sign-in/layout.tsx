@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/providers";
+import withAuth from "@/hocs/withAuth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   description: "Take it easy to hang out with friends",
 };
 
-export default function LoginLayout({
+function LoginLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -22,3 +23,4 @@ export default function LoginLayout({
     </html>
   );
 }
+export default (LoginLayout)

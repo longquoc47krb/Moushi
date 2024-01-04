@@ -5,6 +5,8 @@ import id.longquoc.messenger.dto.user.UserStateDto;
 import id.longquoc.messenger.enums.NotificationType;
 import id.longquoc.messenger.enums.UserState;
 import id.longquoc.messenger.model.Notification;
+import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.chat.UserSocketService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ public class WebSocketEventListener {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
     private final SimpMessagingTemplate template;
     private final UserSocketService userSocketService;
+    private final UserService userService;
 
     private void handleSession(String username, String logText, UserState userState) {
         logger.info(logText);
@@ -53,8 +56,10 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         Principal principal = event.getUser();
+        assert principal != null;
         if (principal != null) {
             String username = principal.getName();
+            userService.updateUserStateAndLastLogin(username, UserState.ONLINE, Instant.now());
             handleSession(username, "User «" + username + "» Connected", UserState.ONLINE);
         }
     }
@@ -64,6 +69,7 @@ public class WebSocketEventListener {
         if (principal != null) {
             String username = principal.getName();
             handleSession(username, "User «" + username + "» Disconnected", UserState.OFFLINE);
+            userService.updateUserStateAndLastLogin(username, UserState.OFFLINE, Instant.now());
             userSocketService.removeByUsername(username);
         }
     }
@@ -71,10 +77,11 @@ public class WebSocketEventListener {
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
         Principal principal = event.getUser();
         if (principal != null) {
-            String user = principal.getName();
+            String username = principal.getName();
             GenericMessage message = (GenericMessage) event.getMessage();
             String simpDestination = (String) message.getHeaders().get("simpDestination");
-            String destination = "/user/" + user + "/queue/messages";
+            String destination = "/user/" + username + "/queue/messages";
+            logger.info("User «" +username + "» subscribed " + destination);
             if (simpDestination.startsWith(destination)) {
                 onUserSubscribe(principal.getName());
             }

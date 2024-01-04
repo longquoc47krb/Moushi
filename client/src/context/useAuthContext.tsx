@@ -18,7 +18,6 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [cookies] = useCookies(["currentUser"]);
     const { currentUser } = cookies;
-    console.log({ currentUser })
     return (
         <AuthContext.Provider value={{ currentUser }}>
             {children}

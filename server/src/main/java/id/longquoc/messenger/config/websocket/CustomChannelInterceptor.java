@@ -29,7 +29,6 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         var command = accessor != null ? accessor.getCommand() : null;
         if (command != null && command.equals(StompCommand.CONNECT)) {
-
             String  authHeader = accessor.getFirstNativeHeader("Authorization");
             String  apiKey = accessor.getFirstNativeHeader("x-api-key");
             if (authHeader == null) devMessageSender.sendError(accessor, "Missing Authorization Header (Bearer)");
@@ -45,5 +44,31 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         }
 
         return message;
+    }
+
+    @Override
+    public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
+        ChannelInterceptor.super.postSend(message, channel, sent);
+    }
+
+    @Override
+    public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        log.debug("<- Incoming <- " + accessor.getMessageType() + " <-");
+    }
+
+    @Override
+    public boolean preReceive(MessageChannel channel) {
+        return ChannelInterceptor.super.preReceive(channel);
+    }
+
+    @Override
+    public Message<?> postReceive(Message<?> message, MessageChannel channel) {
+        return ChannelInterceptor.super.postReceive(message, channel);
+    }
+
+    @Override
+    public void afterReceiveCompletion(Message<?> message, MessageChannel channel, Exception ex) {
+        ChannelInterceptor.super.afterReceiveCompletion(message, channel, ex);
     }
 }

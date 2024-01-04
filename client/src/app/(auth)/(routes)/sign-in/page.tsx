@@ -20,7 +20,7 @@ import { FaCheck } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 type LoginFormInputs = {
-  email: string;
+  credential: string;
   password: string;
 };
 
@@ -55,7 +55,7 @@ function Page() {
     // })
     // console.log("Sign in response:", response);
     await loginApi({
-      credential: data.email,
+      credential: data.credential,
       password: data.password
     }).then((res: any) => {
       if (res.status === 201) {
@@ -88,12 +88,12 @@ function Page() {
     <div className="flex justify-center items-center p-4 h-[100dvh]">
       <Toaster />
       <motion.div
-        className="w-2/5 px-4"
+        className="md:w-2/5 md:px-4 w-full px-2"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-[40px] font-bold leading-10 text-gradient">
+        <p className="md:text-[40px] text-[32px] font-bold leading-10 text-gradient">
           Connect, Communicate, Celebrate
         </p>
         <span className="text-gray-400 text-lg leading-10">
@@ -101,13 +101,13 @@ function Page() {
         </span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
-            label="Email"
-            name="email"
+            label="Email/Username"
+            name="credential"
             className="mt-4"
             register={register}
           />
-          {errors.email && (
-            <span className="text-red-600 text-xs">{errors.email.message}</span>
+          {errors.credential && (
+            <span className="text-red-600 text-xs">{errors.credential.message}</span>
           )}
           <Input
             type="password"
@@ -161,7 +161,7 @@ function Page() {
         alt="login"
         width={1027}
         height={800}
-        className="w-3/5 rounded-3xl"
+        className="w-3/5 rounded-3xl hidden md:block"
       />
     </div>
   );

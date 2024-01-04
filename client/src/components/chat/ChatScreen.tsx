@@ -1,21 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import axios from "axios";
-import { useStompContext } from "../../context/useStompContext";
-import Message from "./Message";
-
-import { useEffect, useState } from "react";
-import Profile from "./Profile";
-import MessageList from "./MessageList";
+import { useState } from "react";
 import ChatBox from "./ChatBox";
-import { blueTheme, redTheme } from "@/themes";
+import MessageList from "./MessageList";
+import Profile from "./Profile";
 
 var stompClient: any = null;
 function ChatScreen() {
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(null);
-  const { isConnected } = useStompContext();
 
 
   return (

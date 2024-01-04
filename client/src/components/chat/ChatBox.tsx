@@ -9,6 +9,7 @@ import { MessageInputField } from "../ui/input";
 import { messages, user2 } from "@/mocks/messageList";
 import { getReceiver } from "@/lib/utils";
 import Verified from "../Verified";
+import { useAuthContext } from "@/context/useAuthContext";
 
 interface ChatBoxProps {
     conversation?: any;
@@ -33,17 +34,18 @@ const ChatBox = ({ conversation }: ChatBoxProps) => {
         register,
         formState: { errors },
     } = useForm<Content>();
+    const { currentUser } = useAuthContext();
     const myFriend = getReceiver(conversation.participants, currentUser);
     return (
         <div className="bg-gray-100 rounded-lg p-4 w-full h-full relative">
             <div className="flex justify-between border-b border-b-gray-300 pb-4">
                 <div className="flex">
                     <Avatar>
-                        <AvatarImage src={myFriend.avatar} />
+                        <AvatarImage src={myFriend?.avatar} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div className="ml-4">
-                        <p className="font-semibold leading-4">{myFriend.name}{myFriend.verified && <Verified />}</p>
+                        <p className="font-semibold leading-4">{myFriend?.name}{myFriend?.verified && <Verified />}</p>
                         {handleStatus("online")}
                     </div>
                 </div>

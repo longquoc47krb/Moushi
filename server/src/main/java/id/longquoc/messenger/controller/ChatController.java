@@ -3,12 +3,14 @@ package id.longquoc.messenger.controller;
 import id.longquoc.messenger.dto.NotificationDTO;
 import id.longquoc.messenger.dto.chat.ConversationDto;
 import id.longquoc.messenger.dto.user.UserStateDto;
+import id.longquoc.messenger.service.UserService;
 import id.longquoc.messenger.service.chat.ChatService;
 import id.longquoc.messenger.service.chat.MessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -23,6 +25,7 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final UserService userService;
     private final MessageSender devMessageSender;
 
 
@@ -36,11 +39,12 @@ public class ChatController {
         return chatService.fetchConversations(principal.getName());
     }
     @MessageMapping("/online")
+    @SendTo("/topic/online")
     public void onlineUsers(Message<?> message){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 //        messagingTemplate.convertAndSend("/topic/online", chatService.fetchOnlineUsers());
-        messagingTemplate.convertAndSend("/topic/online", "Co 1 nguoi online");
-        devMessageSender.sendReceipt(accessor, "Processed by server");
+        messagingTemplate.convertAndSend("/topic/online", userService.generateFakeUser());
+        devMessageSender.sendReceipt(accessor, "[Online Users] Processed by server");
     }
     @MessageMapping("/change-user-state")
     public void changeUserState(@Payload UserStateDto userStateDto, Principal userPrincipal) {

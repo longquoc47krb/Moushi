@@ -1,3 +1,4 @@
+import { logoutApi } from "@/app/services/auth";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,10 +10,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useSocketContext } from "@/context/useSocketContext";
 import { useRouter } from "next/navigation";
 
 const LogoutDialog = ({ children }: { children: any }) => {
     const router = useRouter()
+    const { disconnect } = useSocketContext()
     return (
         <AlertDialog>
             <AlertDialogTrigger>{children}</AlertDialogTrigger>
@@ -25,9 +28,11 @@ const LogoutDialog = ({ children }: { children: any }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => {
+                    <AlertDialogAction onClick={async () => {
                         localStorage.removeItem("accessToken");
                         router.push("/sign-in")
+                        await logoutApi()
+                        disconnect()
                     }}>Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

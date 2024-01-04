@@ -35,7 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
        that do not support WebSocket.*/
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS();
     }
     /*TODO: Add a message converter using Jackson to convert Java objects
        to JSON and vice versa.*/
@@ -56,31 +56,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration
-                .interceptors(channelInterceptor)
-                .interceptors(new ChannelInterceptor() {
-
-                    @Override
-                    public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
-                        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-                        log.debug("<- Incoming <- " + accessor.getMessageType() + " <-");
-                    }
-                });
+                .interceptors(channelInterceptor);
     }
 
     @Override
     public void configureClientOutboundChannel(ChannelRegistration registration) {
         registration
-                .interceptors(new ChannelInterceptor() {
-
-                    @Override
-                    public void afterSendCompletion(@NonNull Message<?> message,
-                                                    @NonNull MessageChannel channel,
-                                                    boolean sent,
-                                                    @Nullable Exception ex) {
-                        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-                        log.debug("-> Outgoing -> " + accessor.getMessageType() + " ->");
-                    }
-                });
+                .interceptors(channelInterceptor);
     }
 
 }

@@ -7,3 +7,12 @@ export const settingList = [
         slug: "change-theme"
     }
 ]
+export const UserState = {
+    OFFLINE: "OFFLINE",
+    ONLINE: "ONLINE"
+}
+export const FriendRequestStatus = {
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    REJECTED: "REJECTED"
+}

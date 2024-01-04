@@ -30,6 +30,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
          WHERE u.username = :username OR u.email = :email
          """)
  User findByEmailOrUsername(String email, String username);
+
+ @Query("""
+         FROM User u
+         WHERE u.username = :username AND u.password = :password
+         """)
+ User findByUsernameAndPassword(String username, String password);
  Optional<User> findById(UUID userId);
 
  @Query("FROM User u " +

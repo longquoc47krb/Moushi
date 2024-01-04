@@ -1,19 +1,28 @@
 "use client";
-"use client";
 
-import { StompProvider } from "../context/useStompContext";
-import { ThemeProvider } from "@/context/useThemeContext";
 import { AuthProvider } from "@/context/useAuthContext";
-import { CookiesProvider } from "react-cookie"
+import { SocketProvider } from "@/context/useSocketContext";
+import { ThemeProvider } from "@/context/useThemeContext";
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query';
+import React from "react";
+import { CookiesProvider } from "react-cookie";
 
 export function Providers({ children }: any) {
+  const [queryClient] = React.useState(() => new QueryClient())
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <CookiesProvider>
-          <StompProvider>{children}</StompProvider>
-        </CookiesProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <SocketProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <CookiesProvider>
+              {children}
+            </CookiesProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SocketProvider>
   );
 }

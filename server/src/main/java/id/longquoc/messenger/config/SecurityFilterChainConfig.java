@@ -71,10 +71,7 @@ public class SecurityFilterChainConfig {
                 );
         http.csrf(AbstractHttpConfigurer::disable).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
-                        .logout(logout -> {
-                            logout.logoutUrl("/v1/api/auth/logout").addLogoutHandler(logoutHandler).logoutSuccessHandler((request,response,authentication)-> SecurityContextHolder.clearContext());
-                        });
+                .authenticationProvider(authenticationProvider);
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -106,7 +103,6 @@ public class SecurityFilterChainConfig {
 
         return authProvider;
     }
-
 
 
 }

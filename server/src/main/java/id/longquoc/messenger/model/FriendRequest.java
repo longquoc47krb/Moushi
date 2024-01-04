@@ -4,6 +4,9 @@ import id.longquoc.messenger.enums.FriendRequestStatus;
 import id.longquoc.messenger.enums.FriendshipRole;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.Instant;
+
 @Entity
 @Data
 public class FriendRequest {
@@ -20,5 +23,6 @@ public class FriendRequest {
     private FriendRequestStatus status;
     @Enumerated(EnumType.STRING)
     private FriendshipRole role = FriendshipRole.BASIC;
+    private Instant friendshipDate;
 
 }

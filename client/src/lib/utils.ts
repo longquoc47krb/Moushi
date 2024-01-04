@@ -1,16 +1,41 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
+import moment from "moment"
 import { twMerge } from "tailwind-merge"
-import cookie from "cookie"
-export function parseCookies(req) {
-  return cookie.parse(req ? req.headers.cookie || "" : document.cookie)
-}
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-export const getReceiver = (users: any[], currentUser: object) => {
+export const getReceiver = (users: any[], currentUser: any) => {
   if (users) {
 
     return users?.filter(u => u.id !== currentUser.id)[0];
   }
   return {}
 }
+export const getTimeAgo = (timestamp: string) => {
+  const timeAgo = moment(timestamp).fromNow(); // Get relative time using fromNow()
+  const timeAgoParts = timeAgo.split(" "); // Split the string to analyze parts
+  console.log({ timeAgoParts })
+  if (timeAgoParts.length > 2) {
+    if (timeAgoParts[0].startsWith("a")) {
+      if (timeAgoParts[1].startsWith("hour")) return "1h";
+      if (timeAgoParts[1].startsWith("minute")) return "1m";
+      if (timeAgoParts[1].startsWith("day")) return "1d";
+      if (timeAgoParts[1].startsWith("month")) return "1mo";
+      if (timeAgoParts[1].startsWith("year")) return null;
+    }
+    if (timeAgoParts[1].startsWith("days") && Number(timeAgoParts[0]) >= 7) {
+      return Math.floor(Number(timeAgoParts[0]) / 4) + "w";
+    }
+    if (timeAgoParts[1].startsWith("hours")) return timeAgoParts[0] + "h";
+    if (timeAgoParts[1].startsWith("minutes")) return timeAgoParts[0] + "m";
+    if (timeAgoParts[1].startsWith("days")) return timeAgoParts[0] + "d";
+    if (timeAgoParts[1].startsWith("months")) return timeAgoParts[0] + "mo";
+    if (timeAgoParts[1].startsWith("years")) return null;
+  }
+  if (timeAgo === "a few seconds ago") {
+    return "1m";
+  }
+
+  // Return the original relative time if it's not in minutes
+  return timeAgo;
+};

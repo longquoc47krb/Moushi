@@ -33,3 +33,14 @@ export const registerApi = async (data: RegisterType) => {
         }
     }
 }
+export const logoutApi = async () => {
+    try {
+        const response = await axiosClient.post("/auth/logout");
+        return response;
+    } catch (error) {
+        return {
+            status: 400,
+            message: error
+        }
+    }
+}

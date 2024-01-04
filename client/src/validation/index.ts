@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const loginSchema = z.object({
-    email: z.string().email(),
+    credential: z.string().regex(/^(?=.*[a-zA-Z0-9@._-])[a-zA-Z0-9@._-]+$/, "Invalid username or email"),
     password: z.string().min(8),
 });
 export const registerSchema = z.object({

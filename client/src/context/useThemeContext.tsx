@@ -18,9 +18,9 @@ interface ThemeProviderProps {
 }
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const { redGradient, witchingHour, flare, byDesign } = themes;
-    const [currentTheme, setCurrentTheme] = useState(flare)
+    const [currentTheme, setCurrentTheme] = useState(witchingHour)
     const [tempTheme, setTempTheme] = useState(null)
-    const { iconStyle, messageStyle, profileStyle } = flare;
+    const { iconStyle, messageStyle, profileStyle } = currentTheme;
     const selectTheme = (theme: any) => {
         setTempTheme(theme)
     }

@@ -6,7 +6,6 @@ package id.longquoc.messenger.service;
         import id.longquoc.messenger.model.FriendRequest;
         import id.longquoc.messenger.model.User;
         import id.longquoc.messenger.enums.FriendRequestStatus;
-        import id.longquoc.messenger.payload.request.FriendRequestReq;
         import id.longquoc.messenger.payload.request.SenderReq;
         import id.longquoc.messenger.payload.response.AreFriendShip;
         import id.longquoc.messenger.payload.response.ResponseObject;
@@ -19,6 +18,7 @@ package id.longquoc.messenger.service;
         import org.springframework.stereotype.Service;
 
         import java.lang.module.ResolutionException;
+        import java.time.Instant;
         import java.util.List;
         import java.util.Optional;
         import java.util.UUID;
@@ -54,16 +54,25 @@ public class FriendRequestService implements IFriendRequestService {
         friendRequestRepository.save(friendRequest);
         return ResponseEntity.ok().body(new ResponseObject(HttpStatus.ACCEPTED.value(), "Sent request successfully", friendRequest));
     }
-    public ResponseEntity<?> acceptFriendRequest(Long requestId, SenderReq senderReq) {
+    public ResponseEntity<?> changeFriendRequestStatus(Long requestId, SenderReq senderReq) {
         UUID senderId = senderReq.getSenderId();
+        FriendRequestStatus friendRequestStatus = FriendRequestStatus.valueOf(senderReq.getFriendRequestStatus());
+        FriendshipRole friendshipRole = senderReq.getFriendRole() == null ? null : FriendshipRole.valueOf(senderReq.getFriendRole());
         FriendRequest friendRequest = friendRequestRepository.findById(requestId).orElseThrow(() -> new ResolutionException("Friend request not found"));
-        if(friendRequest.getSender().getId().equals(senderId)){
+        if(friendRequest.getSender().getId().equals(senderId) && friendRequestStatus.equals(FriendRequestStatus.PENDING)){
             return ResponseEntity.badRequest().body(new ResponseObject(401, "The friend request cannot be accepted if you were the one who sent it"));
         }
-        friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
-        friendRequest.setRole(FriendshipRole.BASIC);
+        if(friendRequestStatus.equals(FriendRequestStatus.ACCEPTED)){
+            friendRequest.setFriendshipDate(Instant.now());
+        }
+        friendRequest.setStatus(friendRequestStatus);
+        if(friendshipRole != null) {
+            friendRequest.setRole(friendshipRole);
+        }
         friendRequestRepository.save(friendRequest);
-        return ResponseEntity.ok().body(new ResponseObject(201, "Accepted successfully"));
+
+        String message = "Change status to " + friendRequestStatus.name() + " successfully";
+        return ResponseEntity.ok().body(new ResponseObject(201, message));
     }
     public boolean areFriends(User account1, User account2) {
         return !friendRequestRepository.findBySenderAndReceiverAndStatus(account1, account2, FriendRequestStatus.ACCEPTED).isEmpty()

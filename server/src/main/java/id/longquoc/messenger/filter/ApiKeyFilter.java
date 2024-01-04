@@ -27,28 +27,28 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String apiKey = request.getHeader(API_KEY_HEADER);
         final Map<String, Object> body = new HashMap<>();
-        if (StringUtils.isEmpty(apiKey)) {
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            body.put("status", HttpServletResponse.SC_FORBIDDEN);
-            body.put("error", "Unauthorized");
-            body.put("message", "API key is missing");
-            body.put("path", request.getServletPath());
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(response.getOutputStream(), body);
-            return;
-        }
-        if (!isValidApiKey(apiKey)) {
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            body.put("status", HttpServletResponse.SC_FORBIDDEN);
-            body.put("error", "Unauthorized");
-            body.put("message", "Invalid API key");
-            body.put("path", request.getServletPath());
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(response.getOutputStream(), body);
-            return;
-        }
+//        if (StringUtils.isEmpty(apiKey)) {
+//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            body.put("status", HttpServletResponse.SC_FORBIDDEN);
+//            body.put("error", "Unauthorized");
+//            body.put("message", "API key is missing");
+//            body.put("path", request.getServletPath());
+//            final ObjectMapper mapper = new ObjectMapper();
+//            mapper.writeValue(response.getOutputStream(), body);
+//            return;
+//        }
+//        if (!isValidApiKey(apiKey)) {
+//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            body.put("status", HttpServletResponse.SC_FORBIDDEN);
+//            body.put("error", "Unauthorized");
+//            body.put("message", "Invalid API key");
+//            body.put("path", request.getServletPath());
+//            final ObjectMapper mapper = new ObjectMapper();
+//            mapper.writeValue(response.getOutputStream(), body);
+//            return;
+//        }
         // Kiểm tra api key có hợp lệ =? cho phép request tiếp theo đi qua filter
         filterChain.doFilter(request, response);
 

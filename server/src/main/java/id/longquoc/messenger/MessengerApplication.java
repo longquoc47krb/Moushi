@@ -19,8 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-
 @SpringBootApplication
+@EnableJpaRepositories(basePackages="id.longquoc.messenger.repository")
 public class MessengerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MessengerApplication.class, args);
