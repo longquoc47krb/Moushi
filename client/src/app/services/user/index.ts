@@ -23,7 +23,7 @@ export const fetchFriendRequestListApi = async (userId: string) => {
         }
     }
 }
-export const changeFriendRequestStatus = async (requestId: string, sendReq: ISenderReq) => {
+export const changeFriendRequestStatusApi = async (requestId: string, sendReq: ISenderReq) => {
     try {
         const response = await axiosClient.put("/friendship/change-status-friend-request/" + requestId, sendReq);
         return response.data

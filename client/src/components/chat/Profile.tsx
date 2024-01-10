@@ -14,7 +14,7 @@ const Profile = ({ pathname }: { pathname?: string | undefined }) => {
   const router = useRouter()
   const { theme } = useThemeContext()
   return (
-    <div className={clsx("h-full py-2 rounded-lg flex flex-col")} style={theme.profileStyle}>
+    <div className={clsx("h-full py-2 rounded-lg flex flex-col")} style={theme.backgroundStyle}>
       <div className="px-4">
         <Avatar>
           <AvatarImage src={currentUser?.profilePicture} />

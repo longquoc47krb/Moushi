@@ -16,19 +16,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Message {
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User sender;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
     private String content;
-    @Column(name = "image", columnDefinition = "LONGBLOB")
-    private byte[] image;
+    private String image;
     private Instant createdAt;
 
     private Instant dateSent;
@@ -37,8 +36,8 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private List<MessageState> states;
 
-    public static Message from(User sender, Conversation conversation, String content) {
-        Message message = new Message();
+    public static ChatMessage from(User sender, Conversation conversation, String content) {
+        ChatMessage message = new ChatMessage();
         message.setContent(content);
         message.setConversation(conversation);
         message.setSender(sender);

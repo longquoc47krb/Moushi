@@ -1,20 +1,21 @@
+import { IUser } from "@/interfaces"
 import { clsx, type ClassValue } from "clsx"
 import moment from "moment"
 import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-export const getReceiver = (users: any[], currentUser: any) => {
+export const getReceiver = (users: IUser[] | undefined, currentUser: IUser) => {
   if (users) {
 
-    return users?.filter(u => u.id !== currentUser.id)[0];
+    return users?.filter((u: IUser) => u.id !== currentUser.id)[0];
   }
   return {}
 }
 export const getTimeAgo = (timestamp: string) => {
   const timeAgo = moment(timestamp).fromNow(); // Get relative time using fromNow()
   const timeAgoParts = timeAgo.split(" "); // Split the string to analyze parts
-  console.log({ timeAgoParts })
+
   if (timeAgoParts.length > 2) {
     if (timeAgoParts[0].startsWith("a")) {
       if (timeAgoParts[1].startsWith("hour")) return "1h";

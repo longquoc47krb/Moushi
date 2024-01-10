@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }
-    /*TODO: register a WebSocket endpoint named /ws-chat,
+    /*TODO: register a WebSocket endpoint named /ws,
        allowing any origin, and using SockJS to support browsers
        that do not support WebSocket.*/
     @Override

@@ -17,10 +17,10 @@ interface ThemeProviderProps {
     children: JSX.Element;
 }
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-    const { redGradient, witchingHour, flare, byDesign } = themes;
-    const [currentTheme, setCurrentTheme] = useState(witchingHour)
+    const { redGradient, witchingHour, flare, byDesign, viciousStance } = themes;
+    const [currentTheme, setCurrentTheme] = useState(viciousStance)
     const [tempTheme, setTempTheme] = useState(null)
-    const { iconStyle, messageStyle, profileStyle } = currentTheme;
+    const { iconStyle, backgroundStyle } = currentTheme;
     const selectTheme = (theme: any) => {
         setTempTheme(theme)
     }

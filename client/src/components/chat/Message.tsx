@@ -1,23 +1,34 @@
-import { IMessage } from "@/interfaces";
+import { IMessage, IMessageResponse } from "@/interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useThemeContext } from "@/context/useThemeContext";
 import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import MessageTooltip from "../MessageTooltip";
+import { getTimeAgo } from "@/lib/utils";
 type MessageItem = {
-  message: IMessage;
-  currentUserId: string;
-  senderExceptCurrentUser: any;
+  message: IMessageResponse;
+  options: {
+    currentUserId: string;
+    senderExceptCurrentUser: any;
+    messageList?: IMessageResponse[];
+    messageKey?: number;
+  }
+
 }
 
 const Message = (props: MessageItem) => {
-  const { message, currentUserId, senderExceptCurrentUser } = props;
+  const { message, options } = props;
+  const { messageList, messageKey } = options;
   const { theme } = useThemeContext()
-  const { messageStyle } = theme;
-
-  if (currentUserId === message.senderId) {
+  const { backgroundStyle } = theme;
+  const shouldHideAvatarForCurrentMessage = () => {
+    if (messageList[messageKey]?.sender?.id == messageList[messageKey - 1]?.sender?.id && messageKey > 0) return true;
+    return false;
+  }
+  if (options.currentUserId === message.sender.id) {
     return <><div className="flex items-end self-end">
-      <div className={clsx(`chat-bubble`)} style={messageStyle}>
+      <div className={clsx(`chat-bubble`)} style={backgroundStyle}>
         <p>{message.content}</p>
 
       </div>
@@ -27,8 +38,8 @@ const Message = (props: MessageItem) => {
     </>
   }
   return <><div className="flex items-end">
-    <Avatar className="w-8 h-8">
-      <AvatarImage src={senderExceptCurrentUser.avatar} />
+    <Avatar className={clsx("w-8 h-8", { "opacity-0": shouldHideAvatarForCurrentMessage() })}>
+      <AvatarImage src={options.senderExceptCurrentUser.profilePicture} />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
     <div className={`chat-bubble bg-[#e0e0e0]`}>

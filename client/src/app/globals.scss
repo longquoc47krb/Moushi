@@ -76,7 +76,7 @@
 }
 .chat-bubble {
   padding: 10px 14px;
-  margin: 10px 0 0 10px;
+  margin: 3px 0 0 10px;
   position: relative;
   animation: fadeIn 1s ease-in;
   width: fit-content;
@@ -121,6 +121,7 @@
   box-shadow: 6px 6px 12px #540000;
 }
 .stroke-text {
-  stroke: 2px #fff;
-  color: rgb(132 204 22 / 1);
+  border-radius: 50%;
+  border: 2px solid white;
+  background: rgb(132 204 22 / 1);
 }

@@ -14,7 +14,7 @@ const FriendItem = ({ friend }: { friend: any }) => {
                         <AvatarImage src={friend?.profilePicture} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    {friend?.userState && <GoDotFill className={clsx("absolute right-0 bottom-[-5px] drop-shadow-md", { "stroke-text": friend?.userState === UserState.ONLINE }, { "hidden": friend?.userState !== UserState.ONLINE })} />}
+                    {friend?.userState && <div className={clsx("absolute right-0 bottom-[-5px] drop-shadow-md w-3 h-3", { "stroke-text": friend?.userState === UserState.ONLINE }, { "hidden": friend?.userState !== UserState.ONLINE })}></div>}
                     {friend?.userState === UserState.OFFLINE && <p className="absolute right-0 bottom-[-5px] bg-gray-100 text-gray-950 px-[4px] rounded-md text-xs">{getTimeAgo(friend?.lastOnline
                     )}</p>
                     }

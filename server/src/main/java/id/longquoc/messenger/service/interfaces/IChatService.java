@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IChatService {
-    void processMessage(NotificationDTO notificationDTO, Principal principal);
+//    void processMessage(NotificationDTO notificationDTO, Principal principal);
     List<OnlineUserDto> fetchOnlineUsers();
 
     List<ConversationDto> fetchConversations(String name);

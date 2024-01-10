@@ -15,6 +15,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   width?: string | number;
   name?: string;
   register?: any;
+  onClickSend?: any
 }
 function Input({
   className,
@@ -58,6 +59,7 @@ export function MessageInputField({
   type = "text",
   width,
   name,
+  onClickSend,
   ...props
 }: InputProps) {
   const { theme } = useThemeContext()
@@ -70,10 +72,12 @@ export function MessageInputField({
           "block px-2.5 pb-2.5 pt-4 pl-8 w-full text-sm text-gray-900 bg-white rounded-lg  dark:text-white dark:border-gray-60 focus:outline-none focus:ring-0  peer shadow-sm shadow-gray-500",
           className
         )}
+        value={props.value}
+        onChange={props.onChange}
         placeholder="Type something..."
       />
       <ImAttachment className="absolute left-2 abs-centery" />
-      <FaPaperPlane className={clsx(" text-5xl p-2 rounded-lg")} style={iconStyle} />
+      <FaPaperPlane className={clsx(" text-5xl p-2 cursor-pointer")} style={iconStyle} onClick={onClickSend} />
     </div>
   );
 }

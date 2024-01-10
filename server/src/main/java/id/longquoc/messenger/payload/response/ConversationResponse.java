@@ -1,6 +1,7 @@
 package id.longquoc.messenger.payload.response;
 
-import id.longquoc.messenger.model.Message;
+import id.longquoc.messenger.model.ChatMessage;
+import id.longquoc.messenger.model.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,8 +12,10 @@ import java.util.UUID;
 @Data
 @Builder
 public class ConversationResponse {
-    UUID id;
-    List<UserResponse> participants;
-    Instant dateStarted;
-    List<Message> messages;
+    private UUID id;
+    private List<User> participants;
+    private Instant dateStarted;
+    private List<MessageResponse> messages;
+    private boolean groupConversation;
+    private Instant dateUpdate;
 }

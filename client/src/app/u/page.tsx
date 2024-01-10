@@ -1,15 +1,17 @@
 "use client"
-import { useParams, useRouter } from "next/navigation";
 import MessageList from "@/components/chat/MessageList";
-import ChatBox from "@/components/chat/ChatBox";
-import { user1 } from "@/mocks/messageList";
+import { useAuthContext } from "@/context/useAuthContext";
 import DashboardLayout from "./DashboardLayout";
-import HomeBox from "@/components/chat/HomeBox";
+import { useSocketContext } from "@/context/useSocketContext";
+import { useEffect } from "react";
 
 const Page = () => {
+    const { currentUser } = useAuthContext()
+    // const { connect } = useSocketContext()
+    // useEffect(() => { connect() }, [])
     return (
         <DashboardLayout>
-            <MessageList />
+            <MessageList currentUser={currentUser} />
         </DashboardLayout>
     );
 }

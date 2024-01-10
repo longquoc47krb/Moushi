@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -30,7 +32,7 @@ public class WebSocketEventListener {
     private final SimpMessagingTemplate template;
     private final UserSocketService userSocketService;
     private final UserService userService;
-
+    private final DestinationStore destinationStore;
     private void handleSession(String username, String logText, UserState userState) {
         logger.info(logText);
         Notification notification = new Notification();
@@ -60,7 +62,7 @@ public class WebSocketEventListener {
         if (principal != null) {
             String username = principal.getName();
             userService.updateUserStateAndLastLogin(username, UserState.ONLINE, Instant.now());
-            handleSession(username, "User «" + username + "» Connected", UserState.ONLINE);
+            destinationStore.connectWebsocket(username);
         }
     }
     @EventListener
@@ -68,7 +70,7 @@ public class WebSocketEventListener {
         Principal principal = event.getUser();
         if (principal != null) {
             String username = principal.getName();
-            handleSession(username, "User «" + username + "» Disconnected", UserState.OFFLINE);
+            destinationStore.disconnectWebsocket(username);
             userService.updateUserStateAndLastLogin(username, UserState.OFFLINE, Instant.now());
             userSocketService.removeByUsername(username);
         }
@@ -76,12 +78,13 @@ public class WebSocketEventListener {
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
         Principal principal = event.getUser();
+        StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
         if (principal != null) {
             String username = principal.getName();
             GenericMessage message = (GenericMessage) event.getMessage();
             String simpDestination = (String) message.getHeaders().get("simpDestination");
             String destination = "/user/" + username + "/queue/messages";
-            logger.info("User «" +username + "» subscribed " + destination);
+            destinationStore.registerDestination(sha.getSessionId(), sha.getDestination(), username);
             if (simpDestination.startsWith(destination)) {
                 onUserSubscribe(principal.getName());
             }

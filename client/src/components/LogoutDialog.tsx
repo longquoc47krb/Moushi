@@ -12,10 +12,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useSocketContext } from "@/context/useSocketContext";
 import { useRouter } from "next/navigation";
+import { useCookies } from "react-cookie"
 
 const LogoutDialog = ({ children }: { children: any }) => {
     const router = useRouter()
     const { disconnect } = useSocketContext()
+    const [cookies, setCookie, removeCookie] = useCookies(['currentUser']);
+
     return (
         <AlertDialog>
             <AlertDialogTrigger>{children}</AlertDialogTrigger>

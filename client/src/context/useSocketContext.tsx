@@ -1,11 +1,9 @@
 "use client";
-import axiosClient from "@/configs/axiosClient";
 import { useSocket } from "@/hooks/useSocket";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useCookies } from "react-cookie"
 
 export const SocketContext = createContext<any>({
-    connect: null, disconnect: null, receivedMessage: null
+    connect: null, disconnect: null
 });
 SocketContext.displayName = "SocketContext";
 
@@ -17,9 +15,10 @@ interface SocketProviderProps {
     children: JSX.Element;
 }
 export const SocketProvider = ({ children }: SocketProviderProps) => {
-    const { connect, disconnect, receivedMessage } = useSocket();
+    const { connect, disconnect, isConnected, stompClient, onSubscribePrivateChat, onSendPrivateChat } = useSocket();
+
     return (
-        <SocketContext.Provider value={{ connect, disconnect, receivedMessage }}>
+        <SocketContext.Provider value={{ connect, disconnect, isConnected, stompClient, onSubscribePrivateChat, onSendPrivateChat }}>
             {children}
         </SocketContext.Provider>
     );

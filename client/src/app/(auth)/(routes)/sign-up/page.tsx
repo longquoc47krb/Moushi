@@ -23,6 +23,8 @@ import { registerApi } from "@/app/services/auth";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { FaCheck } from "react-icons/fa";
+import { useThemeContext } from "@/context/useThemeContext";
+import withAuth from "@/hocs/withAuth";
 
 type RegisterFormInputs = {
   fullName: string;
@@ -52,6 +54,7 @@ function Page() {
   });
   const { toast } = useToast();
   const router = useRouter();
+  const { theme } = useThemeContext()
   watch("password");
   const password = getValues("password");
   const onSubmit = async (data: RegisterFormInputs) => {
@@ -204,8 +207,9 @@ function Page() {
             </span>
           )}
           <Button
-            className="bg-sky-600 rounded-xl hover:bg-sky-700 w-full text-white my-4"
+            className="rounded-xl w-full my-4"
             type="submit"
+            style={theme.backgroundStyle}
           >
             Sign up
           </Button>
@@ -248,4 +252,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default withAuth(Page);

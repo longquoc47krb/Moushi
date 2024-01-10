@@ -8,6 +8,7 @@ import id.longquoc.messenger.mapper.UserMapper;
 import id.longquoc.messenger.model.Conversation;
 import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
+import id.longquoc.messenger.payload.request.ConversationRequest;
 import id.longquoc.messenger.payload.response.FriendInvitationResponse;
 import id.longquoc.messenger.payload.response.ResponseObject;
 import id.longquoc.messenger.repository.ConversationRepository;
@@ -16,7 +17,10 @@ import id.longquoc.messenger.security.jwt.JwtUtils;
 import id.longquoc.messenger.service.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +43,12 @@ public class UserService implements IUserService {
     private final ConversationRepository conversationRepository;
     private final JwtUtils jwtUtils;
     private final FriendRequestService friendRequestService;
+
+    private ConversationService conversationService;
+    @Autowired
+    public void setConversationService(@Lazy ConversationService conversationService) {
+        this.conversationService = conversationService;
+    }
     public ResponseEntity<?> generateFakeUser() {
         User user = new User();
         user.setFullName(faker.name().fullName());
@@ -121,7 +131,14 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userId).orElse(null);
         List<FriendRequestDto> friendRequests = friendRequestService.findFriendRequestsByUserId(userId);
         List<FriendRequestDto> acceptedRequests = friendRequests.stream().filter(fr -> fr.getStatus().equals(FriendRequestStatus.ACCEPTED)).toList();
-
+        for(FriendRequestDto requestDto : acceptedRequests) {
+            List<UUID> friendList = new ArrayList<>();
+            friendList.add(requestDto.getSender().getId());
+            friendList.add(requestDto.getReceiver().getId());
+            if(!conversationService.participantsHasConversation(friendList)) {
+                conversationService.createConversation(new ConversationRequest(Instant.now(),friendList));
+            }
+        }
         return acceptedRequests.stream()
                 .map(request -> request.getReceiver().equals(user) ? request.getSender() : request.getReceiver()).collect(Collectors.toList());
     }

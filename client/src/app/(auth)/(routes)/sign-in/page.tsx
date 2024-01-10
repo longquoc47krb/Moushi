@@ -10,11 +10,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { loginSchema } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { useCookies } from "react-cookie"
+import { useCookies } from "react-cookie";
 
+import { useThemeContext } from "@/context/useThemeContext";
+import withAuth from '@/hocs/withAuth';
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaCheck } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -36,6 +37,7 @@ function Page() {
   const { push } = useRouter()
   const [cookie, setCookie] = useCookies(["currentUser"])
   const { toast } = useToast();
+  const { theme } = useThemeContext()
   const onSubmit = async (data: LoginFormInputs) => {
     // Handle form submission logic here (e.g., login request)
     toast({
@@ -47,13 +49,6 @@ function Page() {
         </div>
       ),
     });
-    // const response = await signIn("credentials", {
-    //   email: data.email,
-    //   password: data.password,
-    //   callbackUrl: "/",
-    //   redirect: false,
-    // })
-    // console.log("Sign in response:", response);
     await loginApi({
       credential: data.credential,
       password: data.password
@@ -121,10 +116,10 @@ function Page() {
               {errors.password.message}
             </span>
           )}
-
           <Button
-            className="bg-sky-600 rounded-xl hover:bg-sky-700 w-full text-white my-4"
+            className="rounded-xl w-full my-4"
             type="submit"
+            style={theme.backgroundStyle}
           >
             Log in
           </Button>
@@ -167,4 +162,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default withAuth(Page);

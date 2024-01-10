@@ -3,6 +3,7 @@ package id.longquoc.messenger.mapper;
 import id.longquoc.messenger.enums.Role;
 import id.longquoc.messenger.model.User;
 import id.longquoc.messenger.payload.response.UserResponse;
+import id.longquoc.messenger.payload.response.UserResponseSecure;
 import id.longquoc.messenger.security.service.UserDetailsImpl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,5 +60,18 @@ public class UserMapper {
     }
     public UserDetails toUserDetails(User user) {
         return UserDetailsImpl.build(user);
+    }
+    public UserResponseSecure toUserResponseSecure(User user){
+        return UserResponseSecure.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .userState(user.getUserState())
+                .profilePicture(user.getProfilePicture())
+                .username(user.getUsername())
+                .lastOnline(user.getLastOnline())
+                .roles(user.getRoles())
+                .fullName(user.getFullName())
+                .build();
     }
 }

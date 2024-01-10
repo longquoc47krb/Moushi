@@ -1,13 +1,11 @@
 package id.longquoc.messenger.model;
 
-import id.longquoc.messenger.enums.ConversationStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 @Entity
 @Builder
 @Getter
@@ -25,27 +23,11 @@ public class Conversation {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> participants;
-    @OneToMany(mappedBy = "conversation")
-    private List<Message> messages;
     private boolean groupConversation = false;
-    @NotNull
-    private Instant dateStarted;
-    @Enumerated(EnumType.STRING)
-    private ConversationStatus status;
-
-    public void setStatusBasedOnFriendship(boolean areFriendship){
-        setStatus(areFriendship ? ConversationStatus.ACCEPTED : ConversationStatus.PENDING);
-    }
-    public List<String> getUsernames() {
-        List<String> usernames = new ArrayList<>();
-        for (User user : participants) {
-            usernames.add(user.getUsername());
-        }
-        return usernames;
-    }
+    private Instant dateUpdate;
 
     public Conversation(List<User> participants) {
         this.participants = participants;
-        this.dateStarted = Instant.now();
+        this.dateUpdate = Instant.now();
     }
 }

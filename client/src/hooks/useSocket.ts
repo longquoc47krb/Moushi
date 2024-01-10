@@ -1,20 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useAuthContext } from '@/context/useAuthContext';
 import { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
-import { Client, over } from "stompjs";
+import { Client, Message, over } from "stompjs";
 const SOCKET_URL = "http://localhost:8080/ws";
 
-var stompClient;
-
+var accessToken = null;
+try {
+  accessToken = localStorage.getItem("accessToken") ?? null;
+} catch (error) { };
 export const useSocket = () => {
   const [isConnected, setConnected] = useState(false);
   const [stompClient, setStompClient] = useState<Client>();
-  const [receivedMessage, setReceivedMessage] = useState();
+  const { currentUser } = useAuthContext()
   const connect = () => {
-    if (!isConnected) {
-      let accessToken;
-      try {
-        accessToken = localStorage.getItem("accessToken") ?? "";
-      } catch (error) { }
+    if (!isConnected && accessToken) {
+
       let socket = new SockJS(SOCKET_URL);
       let client = over(socket);
       client.connect({
@@ -24,6 +25,7 @@ export const useSocket = () => {
       setStompClient(client);
     }
   };
+  console.log({ connectWebsocket: isConnected })
   const disconnect = () => {
     if (isConnected && stompClient) {
       stompClient.disconnect(() => {
@@ -36,25 +38,30 @@ export const useSocket = () => {
     setTimeout(() => {
       setConnected(true);
     }, 1000);
+
   }
   const onError = (err: any) => {
     setConnected(false);
-    setTimeout(connect, 300000);
-    console.log("STOMP: Reconecting in 5 minutes");
+    setTimeout(connect, 1000 * 60);
+    console.log("STOMP: Reconecting in 1 minute");
   };
-  useEffect(() => {
+  const onSubscribePrivateChat = (username: string, callback: (message: Message) => any) => {
     if (isConnected && stompClient?.connected) {
-      stompClient.subscribe(`/topic/online`, onMessageReceived);
+      stompClient?.subscribe('/user/' + username + '/private-messages', callback);
     }
-  }, [isConnected, stompClient]);
-  const onMessageReceived = (payload: any) => {
-    const payloadData = JSON.parse(payload.body);
-    setReceivedMessage(payloadData);
-  };
-  console.log({ isConnected })
+  }
+  const onSendPrivateChat = (payload: any) => {
+    if (isConnected && stompClient?.connected) {
+      console.log(">> Send: ", payload);
+      stompClient?.send(`/app/private-chat`, {}, JSON.stringify(payload));
+    }
+  }
   return {
+    stompClient,
+    isConnected,
     connect,
     disconnect,
-    receivedMessage
+    onSubscribePrivateChat,
+    onSendPrivateChat
   }
 }

@@ -60,13 +60,18 @@ public class SecurityFilterChainConfig {
             "/v1/api/friendship/**",
             "/v1/api/conversation/**"
     };
+    private final String[] API_ENDPOINTS_PUBLIC = {
+            "/v1/api/**",
+            "/ws/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests((registry) -> {
-                    registry.requestMatchers(API_ENDPOINTS_NO_AUTH).permitAll();
+//                    registry.requestMatchers(API_ENDPOINTS_NO_AUTH).permitAll();
 //                    registry.requestMatchers(API_ENDPOINTS_AUTH).hasAuthority(Constants.ROLE_BASIC);
-                    registry.requestMatchers(API_ENDPOINTS_AUTH).permitAll();
+//                    registry.requestMatchers(API_ENDPOINTS_AUTH).permitAll();
+                    registry.requestMatchers(API_ENDPOINTS_PUBLIC).permitAll();
                     }
                 );
         http.csrf(AbstractHttpConfigurer::disable).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));

@@ -2,57 +2,55 @@ import { ITheme } from "@/interfaces"
 
 
 const redGradient: ITheme = {
-    profileStyle: {
-        background: 'linear-gradient(145deg, #e00000, #bc0000)',
-    },
     iconStyle: {
         color: "#e00000"
     },
-    messageStyle: {
+    backgroundStyle: {
         background: 'linear-gradient(145deg, #e00000, #bc0000)',
         color: "white"
     }
 
 }
 const witchingHour: ITheme = {
-    profileStyle: {
-        background: 'linear-gradient(45deg, #c31432, #240b36)',
-    },
     iconStyle: {
         color: "#c31432"
     },
-    messageStyle: {
+    backgroundStyle: {
         background: 'linear-gradient(45deg, #c31432, #240b36)',
         color: "white"
     }
 
 }
 const flare: ITheme = {
-    profileStyle: {
-        background: 'linear-gradient(45deg, #f12711, #f5af19)',
-    },
     iconStyle: {
         color: "#f12711"
     },
-    messageStyle: {
+    backgroundStyle: {
         background: 'linear-gradient(45deg, #f12711, #f5af19)',
         color: "white"
     }
 
 }
 const byDesign: ITheme = {
-    profileStyle: {
-        background: 'linear-gradient(45deg, #009FFF, #ec2F4B)',
-    },
     iconStyle: {
         color: "#009FFF"
     },
-    messageStyle: {
+    backgroundStyle: {
         background: 'linear-gradient(45deg, #009FFF, #ec2F4B)',
         color: "white"
     }
 
 }
+const viciousStance: ITheme = {
+    iconStyle: {
+        color: "#29323c"
+    },
+    backgroundStyle: {
+        backgroundImage: 'linear-gradient(60deg, #29323c 0%, #485563 100%)',
+        color: "white"
+    }
+}
+// background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
 export const themes = {
-    redGradient, witchingHour, flare, byDesign
+    redGradient, witchingHour, flare, byDesign, viciousStance
 }

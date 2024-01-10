@@ -7,13 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.UUID;
 
-public interface MessageRepository extends JpaRepository<ChatMessage, UUID> {
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> {
 
-    @Query(value = """
-            SELECT id, sender, content
-            FROM ChatMessage m
-            WHERE m.conversation = :conversationId
-            """)
-    List<ChatMessage> findMessagesByConversationId(String conversationId);
+    @Query("SELECT m FROM ChatMessage m WHERE m.conversation.id = :conversationId")
+    List<ChatMessage> findMessagesByConversationId(UUID conversationId);
 
 }

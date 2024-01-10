@@ -5,7 +5,7 @@ import id.longquoc.messenger.dto.chat.MessageDto;
 import id.longquoc.messenger.dto.user.OnlineUserDto;
 import id.longquoc.messenger.enums.TypingState;
 import id.longquoc.messenger.model.Conversation;
-import id.longquoc.messenger.model.Message;
+import id.longquoc.messenger.model.ChatMessage;
 import id.longquoc.messenger.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,7 +19,7 @@ public interface MessageMapper {
 
     @Mapping(source = "sender.username", target = "sender")
     @Mapping(source = "conversation.id", target = "conversationId")
-    MessageDto toDto(Message message);
+    MessageDto toDto(ChatMessage message);
     default ConversationDto toConversationDto(Conversation conversation, String currentUser) {
         List<User> participants = conversation.getParticipants();
         for(User user : participants) {

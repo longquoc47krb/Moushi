@@ -57,7 +57,7 @@ public class FriendRequestService implements IFriendRequestService {
     public ResponseEntity<?> changeFriendRequestStatus(Long requestId, SenderReq senderReq) {
         UUID senderId = senderReq.getSenderId();
         FriendRequestStatus friendRequestStatus = FriendRequestStatus.valueOf(senderReq.getFriendRequestStatus());
-        FriendshipRole friendshipRole = senderReq.getFriendRole() == null ? null : FriendshipRole.valueOf(senderReq.getFriendRole());
+        FriendshipRole friendshipRole = FriendshipRole.valueOf(senderReq.getFriendRole());
         FriendRequest friendRequest = friendRequestRepository.findById(requestId).orElseThrow(() -> new ResolutionException("Friend request not found"));
         if(friendRequest.getSender().getId().equals(senderId) && friendRequestStatus.equals(FriendRequestStatus.PENDING)){
             return ResponseEntity.badRequest().body(new ResponseObject(401, "The friend request cannot be accepted if you were the one who sent it"));

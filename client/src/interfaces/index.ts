@@ -8,13 +8,20 @@ export interface IUser {
     roles: Role[]; // Assuming Role is another interface or type
     userState: UserState; // Assuming UserState is another interface or type
     conversationsByUserId: IConversation[]; // Assuming Conversation is another interface or type
-    lastOnline: Date | null; // Using Date or null to represent Instant
+    lastOnline: Date | any; // Using Date or null to represent Instant
     profilePicture: string;
     sessions: number;
 }
 export interface IFriendInvitationResponse {
     requestId: string;
     sender: IUser;
+}
+export interface IConversationResponse {
+    id: string;
+    participants: IUser[] | undefined;
+    messages: IMessage[];
+    dateSent: any;
+    groupConversation: boolean;
 }
 export interface IConversation {
     id: string;
@@ -30,7 +37,7 @@ enum ConversationStatus {
     REJECTED = 'REJECTED',
     // Other possible conversation statuses
 }
-enum UserState {
+export enum UserState {
     ONLINE = 'ONLINE',
     OFFLINE = 'OFFLINE',
     BUSY = 'BUSY',
@@ -62,6 +69,23 @@ export interface IMessage {
     dateRead: Date | null;
     states: MessageState[];
 }
+export interface IMessageResponse {
+    id: string;
+    sender: IUser;
+    conversationId: string;
+    dateSent: Date | any;
+    dateDelivered: Date | any;
+    dateRead: Date | any;
+    states: MessageState[];
+    content: string;
+    image?: string;
+}
+export interface IMessageReq {
+    username: string;
+    conversationId: string;
+    content: string;
+    image?: string | any;
+}
 export interface IConversationDto {
     id: string; // UUID as string
     fullName: string;
@@ -78,8 +102,7 @@ export interface INotificationDTO {
     metadata: string;
 }
 export interface ITheme {
-    profileStyle: object;
-    messageStyle: object;
+    backgroundStyle: object;
     iconStyle: object
 }
 type NotificationType =
